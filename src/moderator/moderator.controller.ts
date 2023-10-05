@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 
 @Controller('moderator')
 export class ModeratorController {
@@ -13,10 +13,18 @@ export class ModeratorController {
     }
 
     @Get('reports/:id')
-    getReport(@Param('id') reportID: string): object{
-        const report={"id": reportID}
+    getReport(@Param('id') reportID: number): object{
+        const report={"Report number": reportID}
         return report;
     }
 
+    @Post('reports/resolve')
+    resolveReport(@Body() reportID: number){
+        return reportID;
+    }
+
     
+
+
+
 }
