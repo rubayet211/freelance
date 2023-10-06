@@ -42,7 +42,11 @@ export class ModeratorController {
 
     @Put('users/:id')
     updateUser(@Param('id') userId: number, @Body() updateUserDto: UpdateUserDto) {
-        const updateUser = this.updateUser(userId, updateUserDto);
+        const updateUser = {
+            id: userId,
+            userType: updateUserDto.userType,
+            userBio: updateUserDto.userBio,
+        };
         return updateUser;
     }
 
