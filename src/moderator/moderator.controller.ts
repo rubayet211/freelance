@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Patch } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query } from "@nestjs/common";
 import { UpdateUserDto } from "./updateuser.dto";
 import { UpdateUserStatusDto } from './upateuserstatus.dto';
 
@@ -60,9 +60,31 @@ export class ModeratorController {
         return updatedUserStatus;
     }
 
+    @Delete('users/:id')
+    deleteUser(@Param('id') userId: number) {
+        return { 'User has been deleted': userId };
+    }
 
+    @Post('announcements')
+    postAnnouncement(@Body() announce: string) {
+        return announce;
+    }
 
+    @Post('announcements/:announcementID')
+    announceSpecificId(@Param('announcementID') announceId: number, @Body() newAnnouncement): any {
+        const announcement = { announceId, announcement: newAnnouncement };
+        return announcement;
+    }
 
+    @Get('search')
+    searchPost(@Query('keyword') keyword: string) {
+        return { 'keyword': keyword };
+    }
+
+    @Delete('announcements/:announcementID')
+    deleteAnnouce(@Param('announcementID') announceId: number) {
+        return { 'Announcement has been deleted': announceId };
+    }
 
 
 
