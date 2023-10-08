@@ -51,13 +51,10 @@ export class ModeratorController {
     }
 
     @Patch('users/:id/status')
-    updateStatus(@Param('id') userId: string, @Body() updateUserStatusDto: UpdateUserStatusDto,) {
+    updateStatus(@Param('id') userId: string, @Body() status) {
 
-        const updatedUserStatus = {
-            id: userId,
-            status: updateUserStatusDto.status,
-        };
-        return updatedUserStatus;
+
+        return { "User ID": userId, "Status": status.status };
     }
 
     @Delete('users/:id')
