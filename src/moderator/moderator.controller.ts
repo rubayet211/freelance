@@ -1,6 +1,5 @@
 import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query } from "@nestjs/common";
 import { UpdateUserDto } from "./updateuser.dto";
-import { UpdateUserStatusDto } from './upateuserstatus.dto';
 
 @Controller('moderator')
 export class ModeratorController {
