@@ -1,33 +1,49 @@
-import { Injectable } from "@nestjs/common";
-import { type } from "os";
+import { Inject, Injectable, Options } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { randomUUID } from "crypto";
+import { DataSource, Repository } from "typeorm";
+import { DeleteResult } from "typeorm/driver/mongodb/typings";
+import { clientCredentials } from "./dto/clients.dto";
+import { clientEntity } from "./entitties/client.entities";
 
 @Injectable()
-export class ClientsServices
-{
-         clients = [
-        {
-            id: "20-44282-3",
-            name: "Atif",
-            age: 25,
-            type: "Standard",
-        },
-        {
-            id: "20-44283-3",
-            name: "Hatem",
-            age: 26,
-            type: "Premium",
-        },
-        {
-            id: "20-44263-3",
-            name: "Rhyme",
-            age: 27,
-            type: "Basic",
-        },
-        {
-            id: "20-44288-3",
-            name: "Arefin",
-            age: 26,
-            type: "Basic",
-        }
-    ]
+export class ClientsServices{
+
+   constructor
+   (
+      @InjectRepository(clientEntity)
+      private userRepository: Repository<clientEntity>
+   ){}
+
+   createClient(clientDetails:clientCredentials)
+   {
+      this.userRepository.save(clientDetails);
+   }
+
+   FindAllClients(): Promise<clientEntity[]>
+   {
+      return this.userRepository.find();
+      // find() is an asynchronous function. It returns a Promise.
+   } 
+
+   FindOneClient(id:number): Promise<clientEntity[]>
+   {
+      return this.userRepository.findBy({id});
+   }
+
+   FindAllClientsByType(params:string): Promise<clientEntity[]>
+   {
+      return this.userRepository.find({where: {type:params}});
+   }
+
+   DeleteClient(id:number): Promise<clientEntity[]>
+   {
+      this.userRepository.delete(id);
+      return this.FindOneClient(id);
+   }
+
+   PatchUpdateClient(id, body)
+   {
+      this.userRepository.update(id,body);
+   }
 }

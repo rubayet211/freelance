@@ -1,99 +1,62 @@
-import { Controller, Get, Req, Res, Param, Query, Post, Body, Headers, Put, Delete } from '@nestjs/common';
-import { HttpStatus } from '@nestjs/common/enums';
-import { Request, Response } from 'express';
+import { Controller, Get, Req, Res, Param, Query, Post, Body, Headers, Put, Delete, Patch, ParseIntPipe, UsePipes, ValidationPipe, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { randomUUID } from 'crypto';
+import { diskStorage, MulterError } from 'multer';
+import { DeleteResult } from 'typeorm';
 import { ClientsServices } from './clients.services';
-import { ClientsDTO } from './DTO/clients.dto';
- 
+import { clientCredentials } from './dto/clients.dto';
+import { clientEntity } from './entitties/client.entities';
+
 @Controller('clients')
 export class ClientsController {
 
-    constructor(private readonly clientsDatabase:ClientsServices){}
+    constructor(private readonly clientsService: ClientsServices) { }
 
-    //Get all the clients of our web app
+    //Get all the client's of the particular type
     @Get()
-    getAllClients()
+    getAllClientsType(@Query('type') params:string): Promise<clientEntity[]>
     {
-        console.log("All")
-        return(this.clientsDatabase.clients);
+        console.log(params);
+        return this.clientsService.FindAllClientsByType(params);
+    }
+
+    //Get all the clients
+    @Get()
+     getAllClients(): Promise<clientEntity[]>
+    {
+        //console.log(this.clientsService.FindAllClients());
+        return this.clientsService.FindAllClients();
     }
 
     //Get a client by his/her ID
     @Get(':id')
-    getOneClient(@Param('id') id)
+    getOneClient(@Param('id',ParseIntPipe) id:number): Promise<clientEntity[]>
     {
-        const result = this.clientsDatabase.clients.findIndex
-        (
-            (clients) => clients.id == id 
-        )
-        return this.clientsDatabase.clients[result];
+        return this.clientsService.FindOneClient(id);
     }
 
-    //Get the particular client's type
-    @Get(':id/:type')
-    getOneClientByType(@Param('id') id)
-    {
-        const result = this.clientsDatabase.clients.findIndex
-        (
-            (clients) => clients.id == id
-        )
-        return (this.clientsDatabase.clients[result].type);
-    }
-
-    //Get all the client's of the particular type
-    @Get()
-    getAllClientsByType(@Query() params:string)
-    {
-        console.log(params)
-        const result = this.clientsDatabase.clients.filter
-        (
-            (clients) => clients.type == params
-        )
-        console.log(params)
-       
-    }
-   
     //Create a new client
     @Post('new')
-    createClient(@Body() credentials:ClientsDTO)
-    {
-        console.log(credentials);
-        if
-        (
-            !credentials.id ||
-            !credentials.name ||
-            !credentials.age
-        )
-        {return ("Oops. Looks like one or more informations are missing. Error code:  "+HttpStatus.BAD_REQUEST);}
-
-        else
-        {
-            const arr = ["Standard","Basic","Premium"];
-            credentials.type = arr[(Math.floor(Math.random() * arr.length))];
-            this.clientsDatabase.clients.push(credentials);
-        }
-
-        return this.clientsDatabase.clients;
+    @UsePipes(new ValidationPipe())
+    createClient(@Body() credentials:clientCredentials): [string, clientCredentials] {
+       credentials.UUID = randomUUID();
+       this.clientsService.createClient(credentials);
+       return ["The following client has been created: ",credentials];
     }
 
     //Delete a client
     @Delete(':id')
-    deleteAClient(@Param('id') clientsDTOid)
+    @UsePipes(ParseIntPipe)
+    deleteAClient(@Param('id') id:number, @Res({passthrough:true}) res: Response): Promise<clientEntity[]>
     {
-        const result = this.clientsDatabase.clients.findIndex
-        (
-            (clients) => clients.id == clientsDTOid
-        )
-        this.clientsDatabase.clients.splice(result);
-
-        return (this.clientsDatabase.clients);
+        return this.clientsService.DeleteClient(id); 
     }
 
-    // @Get(':id?name')
-    // updateClientsInfo(@Query('name') query)
-    // {
-        
-    //         console.log(query);
-        
-    // }
+    //Partially Update a client
+    @Patch(':id')
+    updatePartiallyClientsInfo(@Param('id') id:number, @Body() body:clientCredentials) 
+    {
+        this.clientsService.PatchUpdateClient(id,body);
+    }
 
 }
