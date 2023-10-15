@@ -4,9 +4,19 @@ import { AppService } from './app.service';
 import { AdminModule } from './admin/admin.module';
 import { FreelancerModule } from './freelancer/freelancer.module';
 import { ModeratorModule } from './moderator/moderator.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-  imports: [AdminModule, FreelancerModule, ModeratorModule],
+  imports: [AdminModule, FreelancerModule, ModeratorModule, TypeOrmModule.forRoot(
+    { type: 'postgres',
+    host: 'localhost',
+    port: 5432,
+    username: 'postgres',
+    password: 'root123',
+    database: 'freelance',//Change to your database name
+    autoLoadEntities: true,
+    synchronize: true,
+    } ),],
   controllers: [AppController],
   providers: [AppService],
 })

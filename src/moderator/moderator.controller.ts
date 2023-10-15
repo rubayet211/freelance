@@ -1,5 +1,8 @@
-import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query, ParseIntPipe, ValidationPipe, UsePipes, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { UpdateUserDto } from "./updateuser.dto";
+import { ReportDto } from "./reports.dto";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { MulterError, diskStorage } from "multer";
 
 @Controller('moderator')
 export class ModeratorController {
@@ -19,6 +22,12 @@ export class ModeratorController {
         return report;
     }
 
+    @Post('reports')
+    @UsePipes(new ValidationPipe())
+    postReport(@Body() report: ReportDto): object {
+        return report;
+    }
+
     @Post('reports/resolve')
     resolveReport(@Body() reportID: number) {
         return reportID;
@@ -34,7 +43,7 @@ export class ModeratorController {
     }
 
     @Get('users/:id')
-    getUser(@Param('id') userID: number): object {
+    getUser(@Param('id', ParseIntPipe) userID: number): object {
         const user = { "User number": userID }
         return user;
     }
@@ -80,6 +89,29 @@ export class ModeratorController {
     @Delete('announcements/:announcementID')
     deleteAnnouce(@Param('announcementID') announceId: number) {
         return { 'Announcement has been deleted': announceId };
+    }
+
+    @Post('upload')
+    @UseInterceptors(FileInterceptor('file'))
+    @UseInterceptors(FileInterceptor('file',
+        {
+            fileFilter: (req, file, cb) => {
+                if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
+                    cb(null, true);
+                else {
+                    cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
+                }
+            },
+            limits: { fileSize: 30000 },
+            storage: diskStorage({
+                destination: './uploads',
+                filename: function (req, file, cb) {
+                    cb(null, Date.now() + file.originalname)
+                },
+            })
+        }))
+    uploadFile(@UploadedFile() file: Express.Multer.File) {
+        console.log(file);
     }
 
 
