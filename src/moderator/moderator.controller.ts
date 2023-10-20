@@ -1,8 +1,22 @@
-import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { UpdateUserDto } from "./updateuser.dto";
+import { ModeratorService } from "./moderator.service";
+import { ModeratorDto } from "./moderator.dto";
 
 @Controller('moderator')
 export class ModeratorController {
+    constructor(private readonly moderatorService: ModeratorService) { }
+
+    @Get()
+    getAll() {
+        return this.moderatorService.getAllModerators();
+    }
+
+    @Post('createmod')
+    @UsePipes(new ValidationPipe())
+    create(@Body() createModeratorDto: ModeratorDto) {
+        return this.moderatorService.createModerator(createModeratorDto);
+    }
 
     @Get('reports')
     getAllReports(): object {
@@ -22,6 +36,11 @@ export class ModeratorController {
     @Post('reports/resolve')
     resolveReport(@Body() reportID: number) {
         return reportID;
+    }
+
+    @Post('createmoderator')
+    createMod(@Body() mod: number) {
+        return mod;
     }
 
     @Get('users')
