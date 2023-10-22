@@ -1,9 +1,4 @@
-<<<<<<< HEAD
-import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query, UsePipes, ValidationPipe } from "@nestjs/common";
-import { UpdateUserDto } from "./updateuser.dto";
-import { ModeratorService } from "./moderator.service";
-import { ModeratorDto } from "./moderator.dto";
-=======
+
 import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query, ParseIntPipe, ValidationPipe, UsePipes, UseInterceptors, UploadedFile } from "@nestjs/common";
 import { UpdateUserDto } from "./updateuser.dto";
 import { ReportDto } from "./reports.dto";
@@ -12,24 +7,12 @@ import { MulterError, diskStorage } from "multer";
 import { ModeratorEntity } from "./moderator.entity";
 import { ModeratorService } from "./moderator.service";
 import { ModeratorInfo } from "./moderator.dto";
->>>>>>> 910df35d92918525d7ba4330603ce16e38877697
 
 @Controller('moderator')
 export class ModeratorController {
     constructor(private readonly moderatorService: ModeratorService) { }
 
     @Get()
-<<<<<<< HEAD
-    getAll() {
-        return this.moderatorService.getAllModerators();
-    }
-
-    @Post('createmod')
-    @UsePipes(new ValidationPipe())
-    create(@Body() createModeratorDto: ModeratorDto) {
-        return this.moderatorService.createModerator(createModeratorDto);
-    }
-=======
     getModerator(): object {
         return this.moderatorService.getModerator();
     }
@@ -127,8 +110,6 @@ export class ModeratorController {
     findModerator(@Param('username') username: string): object {
         return this.moderatorService.findModerator(username);
     }
-
->>>>>>> 910df35d92918525d7ba4330603ce16e38877697
 
     @Get('reports')
     getAllReports(): object {
