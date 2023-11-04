@@ -4,7 +4,6 @@ import { UpdateUserDto } from "./updateuser.dto";
 import { ReportDto } from "./reports.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
-import { ModeratorEntity } from "./moderator.entity";
 import { ModeratorService } from "./moderator.service";
 import { ModeratorInfo } from "./moderator.dto";
 
@@ -137,47 +136,6 @@ export class ModeratorController {
         return reportID;
     }
 
-    @Post('createmoderator')
-    createMod(@Body() mod: number) {
-        return mod;
-    }
-
-    @Get('users')
-    getAllUsers(): object {
-
-        const users = { id: 1, type: "freelancer" };
-
-        return users;
-
-    }
-
-    @Get('users/:id')
-    getUser(@Param('id', ParseIntPipe) userID: number): object {
-        const user = { "User number": userID }
-        return user;
-    }
-
-    @Put('users/:id')
-    updateUser(@Param('id') userId: number, @Body() updateUserDto: UpdateUserDto) {
-        const updateUser = {
-            id: userId,
-            userType: updateUserDto.userType,
-            userBio: updateUserDto.userBio,
-        };
-        return updateUser;
-    }
-
-    @Patch('users/:id/status')
-    updateStatus(@Param('id') userId: string, @Body() status) {
-
-
-        return { "User ID": userId, "Status": status.status };
-    }
-
-    @Delete('users/:id')
-    deleteUser(@Param('id') userId: number) {
-        return { 'User has been deleted': userId };
-    }
 
     @Post('announcements')
     postAnnouncement(@Body() announce: string) {
