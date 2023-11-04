@@ -3,11 +3,16 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { ModeratorEntity } from './moderator.entity';
 import { ModeratorInfo } from './moderator.dto';
+import * as bcrypt from 'bcrypt';
+
 
 @Injectable()
 export class ModeratorService {
     constructor(@InjectRepository(ModeratorEntity) private ModeratorRepository: Repository<ModeratorEntity>) { }
     async createModerator(ModeratorInfo: ModeratorInfo): Promise<ModeratorEntity> {
+        const salt = await bcrypt.genSalt();
+        const hashedPassword = await bcrypt.hash(ModeratorInfo.password, salt);
+        ModeratorInfo.password = hashedPassword;
         return await this.ModeratorRepository.save(ModeratorInfo);
     }
     async getModerator(): Promise<ModeratorEntity[]> {

@@ -1,6 +1,5 @@
 
 import { Body, Controller, Get, Param, Post, Put, Patch, Delete, Query, ParseIntPipe, ValidationPipe, UsePipes, UseInterceptors, UploadedFile } from "@nestjs/common";
-import { UpdateUserDto } from "./updateuser.dto";
 import { ReportDto } from "./reports.dto";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { MulterError, diskStorage } from "multer";
