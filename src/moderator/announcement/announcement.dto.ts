@@ -1,17 +1,13 @@
-import { IsDate, IsNotEmpty, Max } from "class-validator";
+import { IsNotEmpty, IsString, Length } from "class-validator";
 
 export class AnnouncementDto {
+    @IsNotEmpty()
+    @IsString()
+    @Length(1, 20, {message: "Title is too long"})  // Set your desired min and max length here
+    title: string;
 
     @IsNotEmpty()
-    @Max(10, {message: "title is too long"})
-    title: string;
-    @IsNotEmpty()
-    @Max(100, {message: "description is too long"})
+    @IsString()
+    @Length(1, 150, {message: "Description is too long"})  // Set your desired min and max length here
     description: string;
-    @IsNotEmpty()
-    @IsDate()
-    created_at: Date;
-    @IsDate()
-    @IsDate()
-    updated_at: Date;
 }
