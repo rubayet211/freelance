@@ -1,25 +1,28 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("reports")
 export class ReportsEntity {
     @PrimaryGeneratedColumn()
-    report_id: number;
+    id: number;
 
     @Column()
-    report_title: string;
+    title: string;
 
     @Column()
-    report_user: string;
+    user: string;
     
     @Column()
-    report_subject: string;
+    subject: string;
 
     @Column()
-    report_description: string;
+    description: string;
 
-    // @Column()
-    // report_date: Date;
+    @CreateDateColumn()
+    createDate: Date;
+
+    @UpdateDateColumn()
+    updateDate: Date;
 
     @Column()
-    report_status: string;
+    status: string;
 }
