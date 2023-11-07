@@ -1,28 +1,29 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { ReportsEntity } from './reports/reports.entity';
 
-@Entity("moderator")
+@Entity('moderator')
 export class ModeratorEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    username: string;
+  @Column()
+  username: string;
 
-    @Column()
-    firstname: string;
+  @Column()
+  firstname: string;
 
-    @Column()
-    lastname: string;
+  @Column()
+  lastname: string;
 
-    @Column()
-    email: string;
-    
-    @Column()
-    password: string;
+  @Column()
+  email: string;
 
-    @Column()
-    filename: string;
+  @Column()
+  password: string;
 
+  @Column()
+  filename: string;
 
-
+  @OneToOne(() => ReportsEntity, (report) => report.moderator)
+  report: ReportsEntity;
 }

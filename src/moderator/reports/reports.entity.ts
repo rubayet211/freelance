@@ -1,28 +1,43 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import { ModeratorEntity } from '../moderator.entity';
 
-@Entity("reports")
+@Entity('reports')
 export class ReportsEntity {
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  id: number;
 
-    @Column()
-    title: string;
+  @Column()
+  title: string;
 
-    @Column()
-    user: string;
-    
-    @Column()
-    subject: string;
+  @Column()
+  user: string;
 
-    @Column()
-    description: string;
+  @Column()
+  subject: string;
 
-    @CreateDateColumn()
-    createDate: Date;
+  @Column()
+  description: string;
 
-    @UpdateDateColumn()
-    updateDate: Date;
+  @CreateDateColumn()
+  createDate: Date;
 
-    @Column()
-    status: string;
+  @UpdateDateColumn()
+  updateDate: Date;
+
+  @Column()
+  status: string;
+
+  @OneToOne(() => ModeratorEntity, (moderator) => moderator.report, {
+    cascade: true,
+  })
+  @JoinColumn()
+  moderator: ModeratorEntity;
 }
