@@ -11,5 +11,8 @@ export class ReportsService {
     async createReport(report: ReportsDto): Promise<ReportsEntity> {
         return this.reportsRepository.save(report);
         }
+    async showAll(): Promise<ReportsEntity[]> {
+        return this.reportsRepository.find();
+    }
 
 }

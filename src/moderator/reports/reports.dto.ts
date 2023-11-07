@@ -1,25 +1,31 @@
-import { IsDate, IsIn, IsNotEmpty, IsString, MaxLength } from "class-validator";
+import {
+  IsDate,
+  IsIn,
+  IsNotEmpty,
+  IsString,
+  Length,
+  MaxLength,
+} from 'class-validator';
 
-export class ReportsDto{
+export class ReportsDto {
+  @IsString()
+  @IsNotEmpty()
+  @Length(1, 50, { message: 'Title is too long' })
+  title: string;
 
+  @IsString()
+  @IsNotEmpty()
+  user: string;
 
-    @IsString()
-    @IsNotEmpty()
-    title: string;
+  @IsNotEmpty()
+  @IsString()
+  @MaxLength(50, { message: 'Subject is too long' })
+  subject: string;
 
-    @IsString()
-    @IsNotEmpty()
-    user: string;
+  @IsString()
+  @MaxLength(1000, { message: 'Description is too long' })
+  description: string;
 
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(50, {message: "Subject is too long"})
-    subject: string;
-
-    @IsString()
-    @MaxLength(1000, {message: "Description is too long"})
-    description: string;
-
-    @IsIn(["pending", "resolved", "processing", "rejected"])
-    status: string;
+  @IsIn(['pending', 'resolved', 'processing', 'rejected'])
+  status: string;
 }
