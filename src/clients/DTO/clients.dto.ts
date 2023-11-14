@@ -1,23 +1,26 @@
-import { Optional } from '@nestjs/common';
-import { IsString, IsEmail, IsNumber } from 'class-validator';
+import { IsString, IsEmail, IsUUID, MinLength, IsStrongPassword, IsOptional, IsMimeType, IsNotEmpty, IsObject, IsDefined } from 'class-validator';
 
 export class clientCredentials {
-    @IsString()
+
+    // @IsString()
+    // @MinLength(10)
     name: string;
 
-    @IsEmail()
+    // @IsEmail()
     email: string;
 
-    @IsString()
+    // @IsString()
+    //@IsStrongPassword()
     password: string;
 
-    @IsString()
+    // @IsString()
     type:string;
 
-    @IsNumber()
-    id:number
+    // @IsOptional()
+    // @IsUUID()
+    UUID:string;
 
-    UUID?:string
-
-    }
+    Image:string;
+    
+}
     

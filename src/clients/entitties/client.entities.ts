@@ -1,7 +1,8 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { projectsEntity } from "./clientproject.entities";
 
 @Entity("Clients")
-export class clientEntity
+export class clientsEntity
 {
     @PrimaryGeneratedColumn()
     id:number;
@@ -20,5 +21,10 @@ export class clientEntity
 
     @Column()
     UUID:string;
+    
+    @Column()
+    Image:string;
 
+    @OneToMany(()=>projectsEntity, (projectsEntity)=>projectsEntity.client)
+    Projects:projectsEntity[];
 }
