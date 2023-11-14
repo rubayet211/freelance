@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   UploadedFile,
   Session,
+  UseGuards,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';

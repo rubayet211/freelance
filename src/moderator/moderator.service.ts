@@ -4,13 +4,17 @@ import { Like, Repository } from 'typeorm';
 import { ModeratorEntity } from './moderator.entity';
 import { ModeratorInfo } from './moderator.dto';
 import * as bcrypt from 'bcrypt';
+import { ReportsEntity } from './reports/reports.entity';
 
 @Injectable()
 export class ModeratorService {
   constructor(
     @InjectRepository(ModeratorEntity)
     private moderatorRepository: Repository<ModeratorEntity>,
-  ) {}
+  ) // @InjectRepository(ReportsEntity)
+  // private reportRepository: Repository<ReportsEntity>,
+  {}
+
   async createModerator(
     ModeratorInfo: ModeratorInfo,
   ): Promise<ModeratorEntity> {
@@ -69,4 +73,18 @@ export class ModeratorService {
     }
     return null;
   }
+
+  // async assignReportToModerator(username: string, reportId: number) {
+  //   const moderator = await this.moderatorRepository.findOne({
+  //     where: { username: username },
+  //   });
+  //   const report = await this.reportRepository.findOne({
+  //     where: { id: reportId },
+  //   });
+
+  //   if (moderator && report) {
+  //     report.moderator = moderator;
+  //     await this.reportRepository.save(report);
+  //   }
+  // }
 }
