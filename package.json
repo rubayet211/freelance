@@ -26,7 +26,6 @@
     "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/typeorm": "^10.0.0",
-<<<<<<< HEAD
     "@types/bcrypt": "^5.0.1",
     "bcrypt": "^5.1.1",
     "class": "^0.1.4",
@@ -42,14 +41,6 @@
     "transformer": "^1.2.8",
     "typeorm": "^0.3.17",
     "validator": "^13.11.0"
-=======
-    "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.0",
-    "pg": "^8.11.3",
-    "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1",
-    "typeorm": "^0.3.17"
->>>>>>> origin/HatemsWork
   },
   "devDependencies": {
     "@nestjs/cli": "^10.1.18",
