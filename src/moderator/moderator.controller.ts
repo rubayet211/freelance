@@ -22,6 +22,7 @@ import { MulterError, diskStorage } from 'multer';
 import { ModeratorService } from './moderator.service';
 import { ModeratorInfo } from './moderator.dto';
 import { ReportsEntity } from './reports/reports.entity';
+import { ReportsDto } from './reports/reports.dto';
 
 @Controller('moderator')
 export class ModeratorController {
@@ -55,11 +56,11 @@ export class ModeratorController {
   )
   createAdmin(
     @Body() moderatorInfo: ModeratorInfo,
-    @Body() report: ReportsEntity,
+    @Body() reportDto: ReportsDto,
     @UploadedFile() myfile: Express.Multer.File,
   ): object {
     moderatorInfo.filename = myfile.filename;
-    return this.moderatorService.createModerator(moderatorInfo, report);
+    return this.moderatorService.createModerator(moderatorInfo, reportDto);
   }
 
   @Put(':id')

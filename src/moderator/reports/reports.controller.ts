@@ -2,7 +2,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -19,15 +21,21 @@ export class ReportsController {
 
   @Post('createReport')
   @UsePipes(new ValidationPipe())
-  async createReport(@Body() report: ReportsDto) {
-    const moderator = await this.moderatorService.getModeratorById(
-      report.moderatorId,
-    );
-    return this.reportsService.createReport(report, moderator);
+  async createReport(@Body() reportDto: ReportsDto) {
+    return this.reportsService.createReport(reportDto);
   }
 
   @Get()
   showAllReports() {
-    return this.reportsService.showAll();
+    return this.reportsService.getReports();
+  }
+
+  @Put('assignModerator/:id')
+  async updateReport(
+    @Param('id') id: number,
+    @Body() updateReportDto: ReportsDto,
+  ) {
+    const report = await this.reportsService.updateReport(id, updateReportDto);
+    return report;
   }
 }

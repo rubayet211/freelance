@@ -18,7 +18,7 @@ export class ModeratorService {
 
   async createModerator(
     moderatorInfo: ModeratorInfo,
-    report: ReportsEntity,
+    reportDto: ReportsDto,
   ): Promise<ModeratorEntity> {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(moderatorInfo.password, salt);
@@ -27,7 +27,7 @@ export class ModeratorService {
     const newModerator = this.moderatorRepository.create(moderatorInfo);
     const savedModerator = await this.moderatorRepository.save(newModerator);
 
-    await this.reportRepository.save(report);
+    await this.reportRepository.save(reportDto);
 
     return savedModerator;
   }

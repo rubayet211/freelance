@@ -16,7 +16,6 @@ import { ReportsEntity } from './reports/reports.entity';
       AnnouncementEntity,
       ReportsEntity,
     ]),
-    ReportsModule,
   ],
   controllers: [ModeratorController, AnnouncementController],
   providers: [ModeratorService, AnnouncementService],
