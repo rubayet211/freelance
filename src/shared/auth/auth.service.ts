@@ -36,6 +36,26 @@ export class AuthService {
     return { user: userWithoutPassword, ...newFreelancerResult };
   }
 
+  async signUpModerator(
+    userDto: CreateUserDto,
+    freelancerDto: CreateFreelancerDto,
+  ) {
+    const newUser = await this.userRepository.save(userDto);
+    const { password, ...userResult } = newUser;
+
+    const newFreelancer = this.freelancerRepository.create({
+      skills: freelancerDto.skills.map((skillName) => ({ name: skillName })),
+      hourlyRate: freelancerDto.hourlyRate,
+      user: userResult,
+    });
+    const savedSkills = await this.skillRepository.save(newFreelancer.skills);
+
+    const savedFreelancer = await this.freelancerRepository.save(newFreelancer);
+    const { user: userWithoutPassword, ...newFreelancerResult } =
+      savedFreelancer;
+    return { user: userWithoutPassword, ...newFreelancerResult };
+  }
+
   async signIn(loginDto: LoginDto) {
     const user = await this.userRepository.findOne({
       where: { email: loginDto.email },

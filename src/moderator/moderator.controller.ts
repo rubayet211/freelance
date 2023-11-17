@@ -21,6 +21,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { MulterError, diskStorage } from 'multer';
 import { ModeratorService } from './moderator.service';
 import { ModeratorInfo } from './moderator.dto';
+import { ReportsEntity } from './reports/reports.entity';
 
 @Controller('moderator')
 export class ModeratorController {
@@ -54,10 +55,11 @@ export class ModeratorController {
   )
   createAdmin(
     @Body() moderatorInfo: ModeratorInfo,
+    @Body() report: ReportsEntity,
     @UploadedFile() myfile: Express.Multer.File,
   ): object {
     moderatorInfo.filename = myfile.filename;
-    return this.moderatorService.createModerator(moderatorInfo);
+    return this.moderatorService.createModerator(moderatorInfo, report);
   }
 
   @Put(':id')
@@ -121,7 +123,9 @@ export class ModeratorController {
     @Body() moderatorInfo: any,
     @UploadedFile() myfile: Express.Multer.File,
   ): Object {
-    moderatorInfo.filename = myfile.filename;
+    if (myfile) {
+      moderatorInfo.filename = myfile.filename;
+    }
     return this.moderatorService.updateSpecModerator(id, moderatorInfo);
   }
 
@@ -147,5 +151,13 @@ export class ModeratorController {
     } else {
       return { status: 'failed' };
     }
+  }
+
+  @Patch('assign-report')
+  async assignReportToModerator(
+    @Body('username') username: string,
+    @Body('reportId') report: number,
+  ) {
+    return this.moderatorService.assignReportToModerator(username, report);
   }
 }

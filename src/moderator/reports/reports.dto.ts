@@ -2,10 +2,12 @@ import {
   IsDate,
   IsIn,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Length,
   MaxLength,
 } from 'class-validator';
+import { ModeratorEntity } from '../moderator.entity';
 
 export class ReportsDto {
   @IsString()
@@ -28,4 +30,7 @@ export class ReportsDto {
 
   @IsIn(['pending', 'resolved', 'processing', 'rejected'])
   status: string;
+
+  @IsOptional()
+  moderatorId: number;
 }

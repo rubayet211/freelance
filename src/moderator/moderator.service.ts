@@ -5,24 +5,34 @@ import { ModeratorEntity } from './moderator.entity';
 import { ModeratorInfo } from './moderator.dto';
 import * as bcrypt from 'bcrypt';
 import { ReportsEntity } from './reports/reports.entity';
+import { ReportsDto } from './reports/reports.dto';
 
 @Injectable()
 export class ModeratorService {
   constructor(
     @InjectRepository(ModeratorEntity)
     private moderatorRepository: Repository<ModeratorEntity>,
-  ) // @InjectRepository(ReportsEntity)
-  // private reportRepository: Repository<ReportsEntity>,
-  {}
+    @InjectRepository(ReportsEntity)
+    private reportRepository: Repository<ReportsEntity>,
+  ) {}
 
   async createModerator(
-    ModeratorInfo: ModeratorInfo,
+    moderatorInfo: ModeratorInfo,
+    report: ReportsEntity,
   ): Promise<ModeratorEntity> {
     const salt = await bcrypt.genSalt();
-    const hashedPassword = await bcrypt.hash(ModeratorInfo.password, salt);
-    ModeratorInfo.password = hashedPassword;
-    return await this.moderatorRepository.save(ModeratorInfo);
+    const hashedPassword = await bcrypt.hash(moderatorInfo.password, salt);
+    moderatorInfo.password = hashedPassword;
+
+    const newModerator = this.moderatorRepository.create(moderatorInfo);
+    const savedModerator = await this.moderatorRepository.save(newModerator);
+
+    report.moderator = savedModerator;
+    await this.reportRepository.save(report);
+
+    return savedModerator;
   }
+
   async getModerator(): Promise<ModeratorEntity[]> {
     return await this.moderatorRepository.find();
   }
@@ -74,17 +84,15 @@ export class ModeratorService {
     return null;
   }
 
-  // async assignReportToModerator(username: string, reportId: number) {
-  //   const moderator = await this.moderatorRepository.findOne({
-  //     where: { username: username },
-  //   });
-  //   const report = await this.reportRepository.findOne({
-  //     where: { id: reportId },
-  //   });
+  async assignReportToModerator(username: string, reportId: number) {
+    const moderator = await this.moderatorRepository.findOneBy({
+      username: username,
+    });
+    const report = await this.reportRepository.findOneBy({ id: reportId });
 
-  //   if (moderator && report) {
-  //     report.moderator = moderator;
-  //     await this.reportRepository.save(report);
-  //   }
-  // }
+    if (moderator && report) {
+      report.moderator = moderator;
+      await this.reportRepository.save(report);
+    }
+  }
 }
