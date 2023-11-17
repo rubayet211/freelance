@@ -1,4 +1,11 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Freelancer } from './freelancer.entity';
 export enum Role {
   freelancer = 'freelancer',
   moderator = 'moderator',
@@ -37,4 +44,10 @@ export class User {
 
   @Column({ nullable: true })
   picture?: string | null;
+
+  @OneToOne(() => Freelancer, (freelancer) => freelancer.user, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn()
+  freelancer: Freelancer;
 }

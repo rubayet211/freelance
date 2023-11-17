@@ -1,5 +1,6 @@
+import * as bcrypt from 'bcryptjs';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Res } from '@nestjs/common';
 import { User } from '../entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -7,7 +8,7 @@ import { Freelancer } from '../entities/freelancer.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { Skill } from '../entities/skills.entity';
-
+import * as nodemailer from 'nodemailer';
 @Injectable()
 export class AuthService {
   constructor(
@@ -26,14 +27,50 @@ export class AuthService {
     const newFreelancer = this.freelancerRepository.create({
       skills: freelancerDto.skills.map((skillName) => ({ name: skillName })),
       hourlyRate: freelancerDto.hourlyRate,
-      user: userResult,
+      user: newUser,
     });
-    const savedSkills = await this.skillRepository.save(newFreelancer.skills);
 
     const savedFreelancer = await this.freelancerRepository.save(newFreelancer);
-    const { user: userWithoutPassword, ...newFreelancerResult } =
-      savedFreelancer;
-    return { user: userWithoutPassword, ...newFreelancerResult };
+    if (newUser && savedFreelancer) {
+      const emailContent = `
+                <html>
+                  <body>
+                    <h1>Welcome to Freelance Site</h1>
+                    <p>Thank you for registering with us.</p>
+                    <p>If you have any questions or need assistance, feel free to contact our support team.</p>
+                    <p>Best regards,<br>Freelance Team</p>
+                  </body>
+                </html>
+              `;
+      const transporter = nodemailer.createTransport({
+        service: 'Gmail',
+        auth: {
+          user: 'abdulhayee5767@gmail.com',
+          pass: 'fxcsmaoautdmwesy',
+        },
+      });
+      const mailOptions = {
+        from: 'abdulhayee5767@gmail.com',
+        to: newUser.email,
+        subject: `Welcome abroad! ` + newUser.username,
+        html: emailContent,
+      };
+      // Send the email
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return {
+            message: 'Invalid Request',
+          };
+        } else {
+          return {
+            message: 'OTP Sent Successfully',
+            email: newUser.email,
+          };
+        }
+      });
+    }
+
+    return savedFreelancer;
   }
 
   async signIn(loginDto: LoginDto) {
@@ -43,30 +80,13 @@ export class AuthService {
     if (!user) {
       throw new Error('User not found');
     }
-    if (user.password !== loginDto.password) {
-      throw new Error('Wrong email or password');
-    }
-    const { password, ...userResult } = user;
+
     const freelancer = await this.freelancerRepository.findOne({
-      where: { user: userResult },
+      where: { user: user },
     });
     if (!freelancer) {
       throw new Error('Freelancer not found');
     }
-    return { user: userResult, ...freelancer };
+    return { user: user, ...freelancer };
   }
-
-  //moved to freelancer.service.ts
-  // async getFreelancerById(freelancerId: number) {
-  //   const freelancer = await this.freelancerRepository
-  //     .createQueryBuilder('freelancer')
-  //     .leftJoinAndSelect('freelancer.skills', 'skills')
-  //     .leftJoinAndSelect('freelancer.user', 'user')
-  //     .where('freelancer.freelancerId = :freelancerId', { freelancerId })
-  //     .getOne();
-  //   if (!freelancer) {
-  //     throw new NotFoundException('Freelancer not found');
-  //   }
-  //   return freelancer;
-  // }
 }
