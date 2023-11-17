@@ -12,10 +12,7 @@ export class ReportsService {
     private reportsRepository: Repository<ReportsEntity>,
   ) {}
 
-  async createReport(
-    report: ReportsDto,
-    moderator: ModeratorEntity,
-  ): Promise<ReportsEntity> {
+  async createReport(report: ReportsDto): Promise<ReportsEntity> {
     return this.reportsRepository.save(report);
   }
   async showAll(): Promise<ReportsEntity[]> {

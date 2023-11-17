@@ -27,7 +27,6 @@ export class ModeratorService {
     const newModerator = this.moderatorRepository.create(moderatorInfo);
     const savedModerator = await this.moderatorRepository.save(newModerator);
 
-    report.moderator = savedModerator;
     await this.reportRepository.save(report);
 
     return savedModerator;
@@ -82,17 +81,5 @@ export class ModeratorService {
       return result;
     }
     return null;
-  }
-
-  async assignReportToModerator(username: string, reportId: number) {
-    const moderator = await this.moderatorRepository.findOneBy({
-      username: username,
-    });
-    const report = await this.reportRepository.findOneBy({ id: reportId });
-
-    if (moderator && report) {
-      report.moderator = moderator;
-      await this.reportRepository.save(report);
-    }
   }
 }

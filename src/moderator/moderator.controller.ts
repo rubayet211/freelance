@@ -152,12 +152,4 @@ export class ModeratorController {
       return { status: 'failed' };
     }
   }
-
-  @Patch('assign-report')
-  async assignReportToModerator(
-    @Body('username') username: string,
-    @Body('reportId') report: number,
-  ) {
-    return this.moderatorService.assignReportToModerator(username, report);
-  }
 }
