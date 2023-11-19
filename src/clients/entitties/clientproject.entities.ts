@@ -1,4 +1,5 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Freelancer } from "src/shared/entities/freelancer.entity";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { clientsEntity } from "./client.entities";
 
 @Entity("Projects")
@@ -14,6 +15,9 @@ export class projectsEntity
     projectBudget:string;
 
     @Column()
+    projectCurrency:string;
+
+    @Column()
     projectDescription:string;
     
     @CreateDateColumn()
@@ -24,5 +28,11 @@ export class projectsEntity
 
     @ManyToOne(()=>clientsEntity, (clientsEntity)=>clientsEntity.Projects)
     client:clientsEntity;
+
+    @OneToOne(()=>Freelancer)
+    @JoinColumn({
+        name: "freelancerId"
+    })
+    Freelancer:Freelancer;
 
 }

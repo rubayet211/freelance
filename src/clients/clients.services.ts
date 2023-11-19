@@ -1,13 +1,13 @@
-import { HttpException, HttpStatus, Inject, Injectable, Options } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { randomUUID } from "crypto";
-import { DataSource, Repository } from "typeorm";
-import { DeleteResult } from "typeorm/driver/mongodb/typings";
+import { Repository } from "typeorm";
 import { ClientLoginDto } from "./dto/clientlogin.dto";
 import { clientCredentials } from "./dto/clients.dto";
 import { CreateProjectDTO } from "./dto/create-project.dto";
 import { clientsEntity } from "./entitties/client.entities";
 import { projectsEntity } from "./entitties/clientproject.entities";
+import * as bcrypt from 'bcrypt';
+import { Freelancer } from "src/shared/entities/freelancer.entity";
 
 @Injectable()
 export class ClientsServices{
@@ -17,18 +17,22 @@ export class ClientsServices{
       @InjectRepository(clientsEntity)
       private userRepository: Repository<clientsEntity>,
       @InjectRepository(projectsEntity)
-      private projectRepository: Repository<projectsEntity>
+      private projectRepository: Repository<projectsEntity>,
+      @InjectRepository(Freelancer)
+      private freelancerRepository: Repository<Freelancer>
    ){}
 
-   createClient(clientDetails:clientCredentials)
+   async createClient(clientDetails )
    {
+      // const salt = await bcrypt.genSalt();
+      // const hassedPass = await bcrypt.hash(clientDetails.password , salt);
+      // clientDetails.password = hassedPass;
       this.userRepository.save(clientDetails);
    }
 
    FindAllClients(): Promise<clientsEntity[]>
    {
       return this.userRepository.find({relations: ['Projects']});
-      // find() is an asynchronous function. It returns a Promise.
    } 
 
    FindOneClient(id:number): Promise<clientsEntity[]>
@@ -57,7 +61,7 @@ export class ClientsServices{
       this.userRepository.update(id,body);
    }
 
-   PutUpdateClient(id:number, body:clientCredentials)
+   PutUpdateClient(id:number, body)
    {
       const {name, email, password, type, UUID, Image} = body;
       if(name == undefined)
@@ -100,18 +104,33 @@ export class ClientsServices{
              });
    }
 
-   ClientLogin(LoginCredentials:ClientLoginDto)
+   async ClientLogin(LoginCredentials : ClientLoginDto)
    {
-      return this.userRepository.findOne({where:{email:LoginCredentials.email,password:LoginCredentials.password}});
+      const client = await this.userRepository.findOne
+      (
+         {
+            where:
+            {
+               email : LoginCredentials.email , 
+               password : LoginCredentials.password
+            }
+         }
+      );
    }
 
-   async createClientProject(id:number, body:CreateProjectDTO)
+   async createClientProject(session, id:number, body:CreateProjectDTO)
    {
       const client = await this.userRepository.findOneBy({ id });
       if(!client)
       {
-         throw new HttpException('Client Not Found.',HttpStatus.BAD_REQUEST);
+         throw new HttpException('No such client exists.',HttpStatus.BAD_REQUEST);
       }
+
+      if(session == undefined)
+      {
+         throw new HttpException('You have to be logged in to create a new project.', HttpStatus.UNAUTHORIZED);
+      }
+
       const newproject = this.projectRepository.create({
          ...body,
          client,
@@ -156,5 +175,49 @@ export class ClientsServices{
    {
       const limitedclients = await this.userRepository.find({ take: query});
       return limitedclients;
+   }
+
+   async FindAllProjectsLimited(query)
+   {
+      const limitedprojects = await this.projectRepository.find({ take: query});
+      return limitedprojects;
+   }
+
+   DeleteProject(id:number)
+   {
+      this.userRepository.delete(id);
+   }
+
+   async getfreelancer(projTitle)
+   {
+      const project = await this.projectRepository.findOne({relations:['Freelancer'] , where: {projectTitle : projTitle}});
+      const freelancer = project.Freelancer;
+      return freelancer;
+   }
+
+   async getsortedProject(sort)
+   {
+      return await this.projectRepository.find({
+         select:
+         {
+            projectTitle:true,
+            projectBudget:true
+         },
+         order: 
+         {
+             projectBudget:sort
+         }
+     })
+   }
+
+   getProjByCurrency(query : string):Promise<projectsEntity[]>
+   {
+      return this.projectRepository.find
+      (
+      {
+         relations:['Projects'],
+         where: {projectCurrency : query}
+      }
+      );
    }
 }

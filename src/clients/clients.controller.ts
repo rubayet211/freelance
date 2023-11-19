@@ -15,19 +15,21 @@ import {
     UsePipes,
     ValidationPipe,
     UploadedFile,
-    UseInterceptors
+    UseInterceptors,
+    ParseBoolPipe
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { randomUUID } from 'crypto';
 import { diskStorage, MulterError } from 'multer';
 import { Response } from 'express'
 import { ClientsServices } from './clients.services';
 import { clientCredentials } from './dto/clients.dto';
 import { clientsEntity } from './entitties/client.entities';
 import { ClientLoginDto } from './dto/clientlogin.dto';
-import { Session } from '@nestjs/common/decorators';
+import { Header, Session, UseGuards } from '@nestjs/common/decorators';
 import { CreateProjectDTO } from './dto/create-project.dto';
 import { UpdateProjectDTO } from './dto/UpdateProjectDTO.dto';
+import { SessionGuard } from './client.guard';
+import { projectsEntity } from './entitties/clientproject.entities';
 
 @Controller('clients')
 export class ClientsController {
@@ -48,18 +50,49 @@ export class ClientsController {
         return this.clientsService.FindAllClientsByType(params);
     }
 
-    @Get('limit')
+    @Get('limitclient')
     getAllClientsLimited(@Query('limit') query: number): Promise<clientsEntity[]> {
         console.log("getAllClientsLimited method");
         return this.clientsService.FindAllClientsLimited(query);
     }
 
+    @Get('limitproject')
+    getAllProjectsLimited(@Query('limit') query: number):Promise<projectsEntity[]>
+    {
+        console.log("getAllProjecsLimited method");
+        return this.clientsService.FindAllProjectsLimited(query);
+    }
+
+    @Get('currencyproject')
+    getAllProjectsByCurrency(@Query('currency') query: string)
+    {
+        console.log("getAllProjecsLimited method");
+        return this.clientsService.getProjByCurrency(query);
+    }
+
     @Get('login')
-    async clientLogin(@Body() LoginCredentials: ClientLoginDto, @Session() session) {
+    async clientLogin(@Headers() header, @Body() LoginCredentials, @Session() session) {
         const app = await this.clientsService.ClientLogin(LoginCredentials);
-        console.log(app.UUID);
-        session.UUID = app.UUID;
+        // console.log(app.UUID);
+        console.log(session.id);
+        console.log(session);
+        // session.UUID = app.UUID;
         return (session.UUID);
+    }
+
+    @Get('project')
+    @UseGuards(SessionGuard)
+    getFreelancerofProject(@Query('title') projTitle:string)
+    {
+        return this.clientsService.getfreelancer(projTitle);
+    }
+
+    @Get('sortproject')
+    @UseGuards(SessionGuard)
+    getProjectSorted(@Query('sort') sort)
+    {
+        console.log('getProjectSorted method');
+        return this.clientsService.getsortedProject(sort);
     }
 
     //Get a client by his/her ID
@@ -89,19 +122,19 @@ export class ClientsController {
         }))
     @UsePipes(new ValidationPipe())
     createClient(@Body() req, @Body() credentials: clientCredentials, @UploadedFile() file: Express.Multer.File): string {
-        console.log(req);
-        console.log(file);
-        console.log(credentials.Image);
-        console.log(credentials.name);
-        credentials.UUID = randomUUID();
         credentials.Image = file.filename;
         this.clientsService.createClient(credentials);
         return "The client has been created.";
     }
 
     @Post(':id/newproject')
-    createProject(@Param('id') id: number, @Body() body: CreateProjectDTO) {
-        return this.clientsService.createClientProject(id, body);
+    @UseGuards(SessionGuard)
+    createProject(@Param('id') id: number, @Body() body: CreateProjectDTO, @Session() session) {
+        const sess = session.UUID;
+        const sessi = session.id;
+        console.log(sess);
+        console.log(sessi);
+        return this.clientsService.createClientProject(sess, id, body);
     }
 
     //Delete a client
@@ -110,6 +143,12 @@ export class ClientsController {
     deleteAClient(@Param('id') id: number): string {
         this.clientsService.DeleteClient(id);
         return "The client has been deleted.";
+    }
+
+    @Delete('project/:id')
+    deleteAProject(@Param('id' , ParseIntPipe) id: number): string {
+        this.clientsService.DeleteProject(id);
+        return "The project has been deleted.";
     }
 
     //Partially Update a client
@@ -132,6 +171,8 @@ export class ClientsController {
         .then((value) => {res.sendFile(value.Image, { root: "./clientImg" });});
     }
 
+    
+
     @Get('project/:id')
     getClientProjects(@Param() param: number) {
         return this.clientsService.FindTheClientsProject(param);
@@ -146,6 +187,5 @@ export class ClientsController {
     putUpdateProject(@Param('id') Param: number, @Body() Body: UpdateProjectDTO) {
         this.clientsService.PutProject(Param, Body);
     }
-
 
 }

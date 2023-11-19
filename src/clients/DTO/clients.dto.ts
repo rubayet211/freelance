@@ -2,24 +2,21 @@ import { IsString, IsEmail, IsUUID, MinLength, IsStrongPassword, IsOptional, IsM
 
 export class clientCredentials {
 
-    // @IsString()
-    // @MinLength(10)
+    @IsString()
+    @MinLength(10)
     name: string;
 
-    // @IsEmail()
+    @IsEmail()
     email: string;
 
-    // @IsString()
-    //@IsStrongPassword()
+    @IsString()
+    @IsStrongPassword()
     password: string;
 
-    // @IsString()
+    @IsString()
     type:string;
 
-    // @IsOptional()
-    // @IsUUID()
-    UUID:string;
-
+    @IsNotEmpty()
     Image:string;
     
 }
