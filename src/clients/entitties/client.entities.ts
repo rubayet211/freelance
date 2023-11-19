@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, Generated, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { projectsEntity } from "./clientproject.entities";
 
 @Entity("Clients")
@@ -20,6 +20,7 @@ export class clientsEntity
     type:string;
 
     @Column()
+    @Generated("uuid")
     UUID:string;
     
     @Column()

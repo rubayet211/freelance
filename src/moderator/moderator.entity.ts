@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { ReportsEntity } from './reports/reports.entity';
 import { AnnouncementEntity } from './announcement/announcement.entity';
+import { Admin } from 'src/admin/entities/admin.entities';
 
 @Entity('moderator')
 export class ModeratorEntity {
@@ -38,4 +39,6 @@ export class ModeratorEntity {
 
   @OneToMany(() => AnnouncementEntity, (announcement) => announcement.moderator)
   announcements: AnnouncementEntity[];
+  @OneToMany(() => Admin, (Admin) => Admin.Moderators)
+  Admins: Admin[];
 }
