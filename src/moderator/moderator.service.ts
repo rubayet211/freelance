@@ -6,6 +6,7 @@ import { ModeratorInfo } from './moderator.dto';
 import * as bcrypt from 'bcrypt';
 import { ReportsEntity } from './reports/reports.entity';
 import { ReportsDto } from './reports/reports.dto';
+import { MailerService } from '@nestjs-modules/mailer';
 
 @Injectable()
 export class ModeratorService {
@@ -14,6 +15,7 @@ export class ModeratorService {
     private moderatorRepository: Repository<ModeratorEntity>,
     @InjectRepository(ReportsEntity)
     private reportRepository: Repository<ReportsEntity>,
+    private mailerService: MailerService,
   ) {}
 
   async createModerator(
@@ -78,6 +80,12 @@ export class ModeratorService {
     const user = await this.moderatorRepository.findOneBy({ username });
     if (user && (await bcrypt.compare(pass, user.password))) {
       const { password, ...result } = user;
+      await this.mailerService.sendMail({
+        to: '20-44334-3@student.aiub.edu',
+        subject: 'Sign In Notification',
+        text: 'You have signed in using nodemailer',
+      });
+
       return result;
     }
     return null;
