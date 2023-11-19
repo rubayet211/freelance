@@ -43,4 +43,11 @@ export class AnnouncementService {
     await this.announcementRepository.update(id, announcementdto);
     return await this.announcementRepository.findOneBy({ id: id });
   }
+  async deleteAnnouncement(id: number): Promise<void> {
+    const announcement = await this.announcementRepository.findOneBy({ id });
+    if (!announcement) {
+      throw new Error('Announcement not found');
+    }
+    await this.announcementRepository.remove(announcement);
+  }
 }

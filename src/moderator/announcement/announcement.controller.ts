@@ -1,10 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
   Post,
+  Put,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -31,5 +33,21 @@ export class AnnouncementController {
       announcementDto,
     );
     return announcement;
+  }
+  @Put('updateAnnouncement/:id')
+  async updateAnnouncement(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() announcementDto: AnnouncementDto,
+  ) {
+    const announcement = await this.announcementService.updateAnnouncement(
+      id,
+      announcementDto,
+    );
+    return announcement;
+  }
+
+  @Delete('deleteAnnouncement/:id')
+  async deleteAnnouncement(@Param('id', ParseIntPipe) id: number) {
+    return this.announcementService.deleteAnnouncement(id);
   }
 }
