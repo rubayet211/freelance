@@ -6,7 +6,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AnnouncementService } from './announcement/announcement.service';
 import { AnnouncementController } from './announcement/announcement.controller';
 import { AnnouncementEntity } from './announcement/announcement.entity';
-import { ReportsModule } from './reports/reports.module';
 import { ReportsEntity } from './reports/reports.entity';
 
 @Module({

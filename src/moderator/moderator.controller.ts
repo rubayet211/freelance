@@ -26,8 +26,6 @@ import { ModeratorInfo } from './moderator.dto';
 import { ReportsEntity } from './reports/reports.entity';
 import { ReportsDto } from './reports/reports.dto';
 import { SessionGuard } from './session.guard';
-import session from 'express-session';
-import { find } from 'rxjs';
 
 @Controller('moderator')
 export class ModeratorController {
@@ -36,11 +34,16 @@ export class ModeratorController {
   @Get()
   @UseGuards(SessionGuard)
   async getModerator(@Session() session): Promise<object> {
-    session.username = this.findModerator(session.username);
     try {
       return await this.moderatorService.getModerator();
     } catch (error) {
-      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        {
+          status: HttpStatus.FORBIDDEN,
+          error: 'Forbidden',
+        },
+        HttpStatus.FORBIDDEN,
+      );
     }
   }
 
@@ -75,6 +78,7 @@ export class ModeratorController {
   }
 
   @Put(':id')
+  @UseGuards(SessionGuard)
   @UsePipes(new ValidationPipe())
   @UseInterceptors(
     FileInterceptor('profilepic', {
@@ -105,6 +109,7 @@ export class ModeratorController {
   }
 
   @Get(':id')
+  @UseGuards(SessionGuard)
   getModeratorById(@Param('id', ParseIntPipe) id: number): object {
     return this.moderatorService.getModeratorById(id);
   }
@@ -130,6 +135,7 @@ export class ModeratorController {
       }),
     }),
   )
+  @UseGuards(SessionGuard)
   updateSpecModerator(
     @Param('id') id: number,
     @Body() moderatorInfo: any,
@@ -147,6 +153,7 @@ export class ModeratorController {
   }
 
   @Get('find/:username')
+  @UseGuards(SessionGuard)
   findModerator(@Param('username') username: string): object {
     return this.moderatorService.findModerator(username);
   }

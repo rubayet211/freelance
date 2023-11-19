@@ -5,9 +5,9 @@ import { ClientsModule } from './clients/clients.module';
 import { AuthModule } from './shared/auth/auth.module';
 import { FreelancerModule } from './freelancer/freelancer.module';
 
-
 @Module({
-  imports: [ClientsModule,
+  imports: [
+    ClientsModule,
     ModeratorModule,
     AuthModule,
     FreelancerModule,

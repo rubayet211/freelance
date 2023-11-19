@@ -46,4 +46,40 @@ export class ReportsService {
     report.moderator = moderator;
     return this.reportsRepository.save(report);
   }
+
+  async updateReport(
+    id: number,
+    updateReportDto: ReportsDto,
+  ): Promise<ReportsEntity> {
+    const moderator = await this.moderatorRepository.findOneBy({
+      id: updateReportDto.moderatorId,
+    });
+    if (!moderator) {
+      throw new Error('Moderator not found');
+    }
+    const report = await this.reportsRepository.findOneBy({ id });
+    if (!report) {
+      throw new Error('Report not found');
+    }
+    report.moderator = moderator;
+    return this.reportsRepository.save(report);
+  }
+
+  async deleteReport(id: number): Promise<void> {
+    const report = await this.reportsRepository.findOneBy({ id });
+    if (!report) {
+      throw new Error('Report not found');
+    }
+    await this.reportsRepository.remove(report);
+  }
+
+  async searchReports(keyword: string): Promise<ReportsEntity[]> {
+    return this.reportsRepository
+      .createQueryBuilder('report')
+      .where(
+        'report.title LIKE :keyword OR report.subject LIKE :keyword OR report.description LIKE :keyword',
+        { keyword: `%${keyword}%` },
+      )
+      .getMany();
+  }
 }
