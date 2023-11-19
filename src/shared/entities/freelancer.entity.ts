@@ -1,5 +1,6 @@
 import {
   Column,
+  DeleteDateColumn,
   Entity,
   JoinColumn,
   JoinTable,
@@ -21,4 +22,11 @@ export class Freelancer {
   @Column({ nullable: true })
   availability: string;
 
+  @OneToOne(() => User, (user) => user.freelancer, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  user: User;
+
+  @ManyToMany(() => Skill, { cascade: true, eager: true })
+  @JoinTable()
+  skills: Skill[];
 }
