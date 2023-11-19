@@ -3,23 +3,44 @@ import { AnnouncementEntity } from './announcement.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AnnouncementDto } from './announcement.dto';
+import { ModeratorEntity } from '../moderator.entity';
 
 @Injectable()
 export class AnnouncementService {
-    constructor(@InjectRepository(AnnouncementEntity) private AnnouncementRepository: Repository<AnnouncementEntity>) { }
+  constructor(
+    @InjectRepository(AnnouncementEntity)
+    private announcementRepository: Repository<AnnouncementEntity>,
+    @InjectRepository(ModeratorEntity)
+    private moderatorRepository: Repository<AnnouncementEntity>,
+  ) {}
 
-    async createAnnouncement(announcementdto: AnnouncementDto): Promise<AnnouncementEntity> {
-        return await this.AnnouncementRepository.save(announcementdto);
+  async createAnnouncement(
+    moderatorId: number,
+    announcementDto: AnnouncementDto,
+  ): Promise<AnnouncementEntity> {
+    const moderator = await this.moderatorRepository.findOneBy({
+      id: moderatorId,
+    });
+    if (!moderator) {
+      throw new Error('Moderator not found');
     }
-    async getAnnouncements(): Promise<AnnouncementEntity[]> {
-        return await this.AnnouncementRepository.find();
-    }
-    async getAnnouncementById(id: number): Promise<AnnouncementEntity> {
-        return await this.AnnouncementRepository.findOneBy({ id: id });
-    }
-    async updateAnnouncement(id: number, announcementdto: AnnouncementDto): Promise<any> {
-        await this.AnnouncementRepository.update(id,announcementdto);
-        return await this.AnnouncementRepository.findOneBy({ id: id });
-    }
-
+    const announcement = this.announcementRepository.create({
+      ...announcementDto,
+      moderator,
+    });
+    return this.announcementRepository.save(announcement);
+  }
+  async getAnnouncements(): Promise<AnnouncementEntity[]> {
+    return await this.announcementRepository.find();
+  }
+  async getAnnouncementById(id: number): Promise<AnnouncementEntity> {
+    return await this.announcementRepository.findOneBy({ id: id });
+  }
+  async updateAnnouncement(
+    id: number,
+    announcementdto: AnnouncementDto,
+  ): Promise<any> {
+    await this.announcementRepository.update(id, announcementdto);
+    return await this.announcementRepository.findOneBy({ id: id });
+  }
 }

@@ -35,7 +35,7 @@ export class ReportsController {
     @Param('id') id: number,
     @Body() updateReportDto: ReportsDto,
   ) {
-    const report = await this.reportsService.updateReport(id, updateReportDto);
+    const report = await this.reportsService.assignReport(id, updateReportDto);
     return report;
   }
 }

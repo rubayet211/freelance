@@ -15,6 +15,8 @@ import {
   UploadedFile,
   Session,
   UseGuards,
+  HttpException,
+  HttpStatus,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -29,8 +31,12 @@ export class ModeratorController {
   constructor(private readonly moderatorService: ModeratorService) {}
 
   @Get()
-  getModerator(): object {
-    return this.moderatorService.getModerator();
+  async getModerator(): Promise<object> {
+    try {
+      return await this.moderatorService.getModerator();
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Post('createModerator')
@@ -142,15 +148,22 @@ export class ModeratorController {
 
   @Post('signin')
   async signIn(@Session() session, @Body() body: ModeratorInfo): Promise<any> {
-    const user = await this.moderatorService.signIn(
-      body.username,
-      body.password,
-    );
-    if (user) {
-      session.username = user.username;
-      return { status: 'success' };
-    } else {
-      return { status: 'failed' };
+    try {
+      const user = await this.moderatorService.signIn(
+        body.username,
+        body.password,
+      );
+      if (user) {
+        session.username = user.username;
+        return { status: 'success' };
+      } else {
+        throw new HttpException(
+          'Invalid username or password',
+          HttpStatus.UNAUTHORIZED,
+        );
+      }
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

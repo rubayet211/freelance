@@ -26,10 +26,10 @@ export class ReportsService {
   }
 
   async getReports(): Promise<ReportsEntity[]> {
-    return this.reportsRepository.find({ relations: ['moderator'] });
+    return this.reportsRepository.find();
   }
 
-  async updateReport(
+  async assignReport(
     id: number,
     updateReportDto: ReportsDto,
   ): Promise<ReportsEntity> {
