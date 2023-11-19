@@ -3,12 +3,14 @@ import { ModeratorModule } from './moderator/moderator.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { AdminModule } from './admin/admin.module';
+import { AuthModule } from './shared/auth/auth.module';
 
 @Module({
   imports: [
     ClientsModule,
     ModeratorModule,
     AdminModule,
+    AuthModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
