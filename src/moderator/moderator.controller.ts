@@ -25,13 +25,18 @@ import { ModeratorService } from './moderator.service';
 import { ModeratorInfo } from './moderator.dto';
 import { ReportsEntity } from './reports/reports.entity';
 import { ReportsDto } from './reports/reports.dto';
+import { SessionGuard } from './session.guard';
+import session from 'express-session';
+import { find } from 'rxjs';
 
 @Controller('moderator')
 export class ModeratorController {
   constructor(private readonly moderatorService: ModeratorService) {}
 
   @Get()
-  async getModerator(): Promise<object> {
+  @UseGuards(SessionGuard)
+  async getModerator(@Session() session): Promise<object> {
+    session.username = this.findModerator(session.username);
     try {
       return await this.moderatorService.getModerator();
     } catch (error) {
@@ -60,7 +65,7 @@ export class ModeratorController {
       }),
     }),
   )
-  createAdmin(
+  createModerator(
     @Body() moderatorInfo: ModeratorInfo,
     @Body() reportDto: ReportsDto,
     @UploadedFile() myfile: Express.Multer.File,
