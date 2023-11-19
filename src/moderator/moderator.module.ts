@@ -7,6 +7,7 @@ import { AnnouncementService } from './announcement/announcement.service';
 import { AnnouncementController } from './announcement/announcement.controller';
 import { AnnouncementEntity } from './announcement/announcement.entity';
 import { ReportsEntity } from './reports/reports.entity';
+import { MailerModule } from '@nestjs-modules/mailer';
 
 @Module({
   imports: [
@@ -15,6 +16,19 @@ import { ReportsEntity } from './reports/reports.entity';
       AnnouncementEntity,
       ReportsEntity,
     ]),
+    //gkkq nphc peac yabx
+    MailerModule.forRoot({
+      transport: {
+        host: 'smtp.gmail.com',
+        port: 465,
+        ignoreTLS: true,
+        secure: true,
+        auth: {
+          user: 'rubayet211@gmail.com',
+          pass: 'gkkq nphc peac yabx',
+        },
+      },
+    }),
   ],
   controllers: [ModeratorController, AnnouncementController],
   providers: [ModeratorService, AnnouncementService],
