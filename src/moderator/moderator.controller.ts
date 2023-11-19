@@ -7,7 +7,6 @@ import {
   Put,
   Patch,
   Delete,
-  Query,
   ParseIntPipe,
   ValidationPipe,
   UsePipes,
@@ -17,7 +16,6 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
-  Req,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
