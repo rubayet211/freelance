@@ -3,13 +3,13 @@ import { FreelancerController } from './freelancer.controller';
 import { FreelancerService } from './freelancer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Freelancer } from 'src/shared/entities/freelancer.entity';
-import { Skill } from 'src/shared/entities/skills.entity';
 import { User } from 'src/shared/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtStrategy } from './guards/jwt.strategy';
 import { clientsEntity } from 'src/shared/entities/clients.entity';
 import { projectsEntity } from 'src/shared/entities/projects.entity';
+import { Skill } from 'src/shared/entities/skills.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([

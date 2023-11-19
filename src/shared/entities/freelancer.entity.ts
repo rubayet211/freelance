@@ -8,6 +8,8 @@ import {
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { Skill } from './skills.entity';
+import { User } from './user.entity';
 @Entity()
 export class Freelancer {
   @PrimaryGeneratedColumn()

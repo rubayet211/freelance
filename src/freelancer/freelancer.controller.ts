@@ -14,6 +14,7 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
+  Session,
 } from '@nestjs/common';
 import { FreelancerService } from './freelancer.service';
 import { MulterError, diskStorage } from 'multer';
@@ -232,7 +233,7 @@ export class FreelancerController {
   }
 
   @Get('getSession')
-  getSession(@Req() req, @Res() res, ss: session) {
+  getSession(@Req() req, @Res() res, @Session() session) {
     try {
       const session = req.session;
       res.status(200).json({ session: session });

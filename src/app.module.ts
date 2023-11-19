@@ -4,7 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { AdminModule } from './admin/admin.module';
 
-
 @Module({
   imports: [
     ClientsModule,
@@ -15,7 +14,7 @@ import { AdminModule } from './admin/admin.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'waledspg',
+      password: 'root123',
       database: 'freelance',
       autoLoadEntities: true,
       synchronize: true,

@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcryptjs';
+import * as bcrypt from 'bcrypt';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
 import { Injectable, NotFoundException, Res } from '@nestjs/common';
 import { User } from '../entities/user.entity';
