@@ -8,9 +8,17 @@ import { User } from 'src/shared/entities/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { JwtStrategy } from './guards/jwt.strategy';
+import { clientsEntity } from 'src/shared/entities/clients.entity';
+import { projectsEntity } from 'src/shared/entities/projects.entity';
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User, Freelancer, Skill]),
+    TypeOrmModule.forFeature([
+      User,
+      Freelancer,
+      Skill,
+      clientsEntity,
+      projectsEntity,
+    ]),
     JwtModule.register({
       secret: '3585a01c430586ddc5b54d19c579284c',
     }),

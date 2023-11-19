@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   Res,
@@ -10,10 +11,16 @@ import {
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
-import { Role } from '../entities/user.entity';
+import { Role, User } from '../entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Session } from 'express-session';
+
+export interface CurrentSession extends Session {
+  isAuthenticated: boolean;
+  user: any;
+}
 @Controller('auth/freelancer')
 export class AuthController {
   constructor(
@@ -59,7 +66,7 @@ export class AuthController {
   async login(
     @Body(new ValidationPipe()) loginDto: LoginDto,
     @Res() res,
-    @Req() req,
+    @Req() req: any & { session: CurrentSession },
   ) {
     try {
       const result = await this.authService.signIn(loginDto);
@@ -90,8 +97,10 @@ export class AuthController {
           expiresIn: '90d',
         },
       );
+      const userWithoutPassword = { ...user, password: undefined };
 
       res.cookie('token', accessToken, { httpOnly: true });
+      (req.session as CurrentSession).user = userWithoutPassword;
 
       res.status(200).json({
         statusCode: 200,
@@ -102,5 +111,17 @@ export class AuthController {
     } catch (error) {
       res.status(400).json({ statusCode: 400, message: error.message });
     }
+  }
+  @Post('logout')
+  logout(@Req() req, @Res() res) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Logout failed' });
+      } else {
+        res.clearCookie('token');
+        return res.json({ message: 'Logout successful' });
+      }
+    });
   }
 }

@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Param,
-  ParseIntPipe,
   Post,
   Body,
   Put,
@@ -22,6 +21,7 @@ import { CreateFreelancerDto, UpdateFreelancerDto } from './freelancer.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import * as fs from 'fs';
+import * as session from 'express-session';
 @Controller('freelancer')
 export class FreelancerController {
   constructor(private freelancerService: FreelancerService) {}
@@ -33,15 +33,40 @@ export class FreelancerController {
       const userId = req.user.userId;
       const fileName = await this.freelancerService.getProfilePicture(userId);
 
-      // read buffer
       const fileBuffer = fs.readFileSync(fileName);
 
-      // set headers and send the file
       res.setHeader('Content-Type', 'image/jpeg');
       res.setHeader('Content-Disposition', 'inline; filename=' + fileName);
 
-      // buffer as the response
       res.status(200).end(fileBuffer);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Delete('deleteProfilePicture')
+  @UseGuards(JwtAuthGuard)
+  async deleteProfilePicture(@Req() req, @Res() res) {
+    try {
+      const userId = req.user.userId;
+      const fileName = await this.freelancerService.getProfilePicture(userId);
+
+      await this.freelancerService.deleteProfilePicture(userId);
+      fs.unlinkSync(fileName);
+
+      res.status(200).json({ message: 'Profile picture deleted successfully' });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Delete('deleteSkill/:id')
+  @UseGuards(JwtAuthGuard)
+  async deleteSkill(@Req() req, @Res() res, @Param('id') skill: number) {
+    try {
+      const skillId = skill;
+      const result = await this.freelancerService.deleteSkill(skill);
+      res.status(200).json({ result: result });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }
@@ -62,25 +87,86 @@ export class FreelancerController {
     }
   }
 
-  // @Put('updateFreelancer')
-  // @UseGuards(JwtAuthGuard)
-  // @UsePipes(new ValidationPipe())
-  // async updateFreelancer(
-  //   @Body(new ValidationPipe()) updateFreelancerDto: UpdateFreelancerDto,
-  //   @Res() res,
-  //   @Req() req,
-  // ) {
-  //   try {
-  //     const userId = req.user.userId;
+  @Get('search/:id')
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async getFreelancerByIdParam(
+    @Req() req,
+    @Res() res,
+    @Param('id') UserId: number,
+  ) {
+    try {
+      const userId = UserId;
+      const freelancer =
+        await this.freelancerService.getFreelancerByIdParam(userId);
+      if (!freelancer) {
+        return res.status(404).json({ message: 'Freelancer not found' });
+      }
+      res.status(200).json(freelancer);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 
-  //     if (!updatedFreelancer) {
-  //       return res.status(404).json({ message: 'Freelancer not found' });
-  //     }
-  //     res.status(200).json(updatedFreelancer);
-  //   } catch (error) {
-  //     res.status(400).json({ message: error.message });
-  //   }
-  // }
+  @Get('viewProjects')
+  async getProjects(@Req() req, @Res() res) {
+    try {
+      const projects = await this.freelancerService.getProjects();
+      if (!projects) {
+        return res.status(404).json({ message: 'Something went wrong' });
+      }
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Get('viewProject/:id')
+  async getProjectsById(@Req() req, @Res() res, @Param('id') id: number) {
+    try {
+      const projects = await this.freelancerService.getProjectsById(id);
+      if (!projects) {
+        return res.status(404).json({ message: 'Something went wrong' });
+      }
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Get('projectByTitle/:title')
+  async getProjectsByTitle(
+    @Req() req,
+    @Res() res,
+    @Param('title') title: string,
+  ) {
+    try {
+      const projects =
+        await this.freelancerService.findSimilarProjectsByTitle(title);
+      if (!projects) {
+        return res.status(404).json({ message: 'Not found' });
+      }
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Get('projectBySkill/:skill')
+  async getProjectsBySkill(
+    @Req() req,
+    @Res() res,
+    @Param('skill') skill: string,
+  ) {
+    try {
+      const projects = await this.freelancerService.getProjectsBySkill(skill);
+      if (!projects) {
+        return res.status(404).json({ message: 'Something went wrong' });
+      }
+      res.status(200).json(projects);
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
 
   @Post('addSkills')
   @UseGuards(JwtAuthGuard)
@@ -140,6 +226,16 @@ export class FreelancerController {
       const userId = req.user.userId;
       this.freelancerService.uploadProfilePicture(userId, fileName);
       res.status(200).json({ message: 'Profile picture updated' });
+    } catch (error) {
+      res.status(400).json({ message: error.message });
+    }
+  }
+
+  @Get('getSession')
+  getSession(@Req() req, @Res() res, ss: session) {
+    try {
+      const session = req.session;
+      res.status(200).json({ session: session });
     } catch (error) {
       res.status(400).json({ message: error.message });
     }

@@ -21,6 +21,17 @@ export class AuthService {
   ) {}
 
   async signUp(userDto: CreateUserDto, freelancerDto: CreateFreelancerDto) {
+    const check = await this.userRepository.findOne({
+      where: { email: userDto.email },
+    });
+
+    if (check) {
+      throw new Error('Email already exists');
+    }
+    if (check.username === userDto.username) {
+      throw new Error('Username is taken, Please try again');
+    }
+
     const newUser = await this.userRepository.save(userDto);
     const { password, ...userResult } = newUser;
 
