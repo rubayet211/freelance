@@ -17,6 +17,7 @@ import {
   UseGuards,
   HttpException,
   HttpStatus,
+  Req,
 } from '@nestjs/common';
 
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -37,13 +38,7 @@ export class ModeratorController {
     try {
       return await this.moderatorService.getModerator();
     } catch (error) {
-      throw new HttpException(
-        {
-          status: HttpStatus.FORBIDDEN,
-          error: 'Forbidden',
-        },
-        HttpStatus.FORBIDDEN,
-      );
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
   }
 
