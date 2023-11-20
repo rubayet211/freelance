@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ModeratorModule } from './moderator/moderator.module';
+import { FreelancerModule } from './freelancer/freelancer.module';
+import { AuthModule } from './shared/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
 import { AdminModule } from './admin/admin.module';
-import { AuthModule } from './shared/auth/auth.module';
 
 @Module({
   imports: [
@@ -21,6 +22,9 @@ import { AuthModule } from './shared/auth/auth.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    FreelancerModule,
+
+    AuthModule,
   ],
   controllers: [],
   providers: [],
