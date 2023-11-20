@@ -14,7 +14,7 @@ import { CreateFreelancerDto } from './dto/create-freelancer.dto';
 import { Role, User } from '../entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { Session } from 'express-session';
 
 export interface CurrentSession extends Session {

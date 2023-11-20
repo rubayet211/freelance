@@ -1,4 +1,4 @@
-import * as bcrypt from 'bcrypt';
+import * as bcrypt from 'bcryptjs';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
 import { Injectable, NotFoundException, Res } from '@nestjs/common';
 import { User } from '../entities/user.entity';
@@ -30,6 +30,9 @@ export class AuthService {
     }
     if (check.username === userDto.username) {
       throw new Error('Username is taken, Please try again');
+      if (check === null) {
+        throw new Error('User not found');
+      }
     }
 
     const newUser = await this.userRepository.save(userDto);
