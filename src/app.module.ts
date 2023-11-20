@@ -1,16 +1,17 @@
 import { Module } from '@nestjs/common';
 import { ModeratorModule } from './moderator/moderator.module';
+import { FreelancerModule } from './freelancer/freelancer.module';
+import { AuthModule } from './shared/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ClientsModule } from './clients/clients.module';
-import { AuthModule } from './shared/auth/auth.module';
-import { FreelancerModule } from './freelancer/freelancer.module';
-
+import { AdminModule } from './admin/admin.module';
 
 @Module({
-  imports: [ClientsModule,
+  imports: [
+    ClientsModule,
     ModeratorModule,
+    AdminModule,
     AuthModule,
-    FreelancerModule,
     TypeOrmModule.forRoot({
       type: 'postgres',
       host: 'localhost',
@@ -21,6 +22,9 @@ import { FreelancerModule } from './freelancer/freelancer.module';
       autoLoadEntities: true,
       synchronize: true,
     }),
+    FreelancerModule,
+
+    AuthModule,
   ],
   controllers: [],
   providers: [],

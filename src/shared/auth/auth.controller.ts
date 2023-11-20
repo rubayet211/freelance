@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   Post,
   Req,
   Res,
@@ -10,10 +11,16 @@ import {
 import { AuthService } from './auth.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { CreateFreelancerDto } from './dto/create-freelancer.dto';
-import { Role } from '../entities/user.entity';
+import { Role, User } from '../entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcryptjs';
+import { Session } from 'express-session';
 
+export interface CurrentSession extends Session {
+  isAuthenticated: boolean;
+  user: any;
+}
 @Controller('auth/freelancer')
 export class AuthController {
   constructor(
@@ -31,13 +38,22 @@ export class AuthController {
   ) {
     try {
       createUserDto.role = Role.freelancer;
+
+      const hashedPassword = await bcrypt.hash(createUserDto.password, 10);
+
+      const createUserWithHashedPasswordDto: CreateUserDto = {
+        ...createUserDto,
+        password: hashedPassword,
+      };
+
       const result = await this.authService.signUp(
-        createUserDto,
+        createUserWithHashedPasswordDto,
         createFreelancerDto,
       );
+
       res.status(201).json({
         statusCode: 201,
-        message: 'Freelancer created succesfully',
+        message: 'Freelancer created successfully',
         result,
       });
     } catch (error) {
@@ -50,14 +66,26 @@ export class AuthController {
   async login(
     @Body(new ValidationPipe()) loginDto: LoginDto,
     @Res() res,
-    @Req() req,
+    @Req() req: any & { session: CurrentSession },
   ) {
     try {
       const result = await this.authService.signIn(loginDto);
+
       if (!result) {
         throw new Error('User not found');
       }
+
       const user = result.user;
+
+      const passwordMatch = await bcrypt.compare(
+        loginDto.password,
+        user.password,
+      );
+
+      if (!passwordMatch) {
+        throw new Error('Invalid password');
+      }
+
       const accessToken = await this.jwtService.signAsync(
         {
           userId: user.userId,
@@ -69,31 +97,31 @@ export class AuthController {
           expiresIn: '90d',
         },
       );
+      const userWithoutPassword = { ...user, password: undefined };
+
       res.cookie('token', accessToken, { httpOnly: true });
+      (req.session as CurrentSession).user = userWithoutPassword;
+
       res.status(200).json({
         statusCode: 200,
-        message: 'Freelancer logged in succesfully',
+        message: 'Freelancer logged in successfully',
         accessToken,
+        role: Role.freelancer,
       });
     } catch (error) {
       res.status(400).json({ statusCode: 400, message: error.message });
     }
   }
-  //moved to freelancer.controller.ts
-  // @Get('getById/:id')
-  // async getFreelancerById(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @Req() req,
-  //   @Res() res,
-  // ) {
-  //   try {
-  //     const freelancer = await this.authService.getFreelancerById(id);
-  //     if (!freelancer) {
-  //       return res.status(404).json({ message: 'Freelancer not found' });
-  //     }
-  //     res.status(200).json(freelancer);
-  //   } catch (error) {
-  //     console.log({ message: error.message });
-  //   }
-  // }
+  @Post('logout')
+  logout(@Req() req, @Res() res) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Logout failed' });
+      } else {
+        res.clearCookie('token');
+        return res.json({ message: 'Logout successful' });
+      }
+    });
+  }
 }
