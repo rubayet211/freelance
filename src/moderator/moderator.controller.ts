@@ -56,18 +56,18 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now() + file.filename);
+          cb(null, Date.now().toString + file.filename);
         },
       }),
     }),
   )
   createModerator(
     @Body() moderatorInfo: ModeratorInfo,
-    @Body() reportDto: ReportsDto,
+    @Body() report: ReportsEntity,
     @UploadedFile() myfile: Express.Multer.File,
   ): object {
     moderatorInfo.filename = myfile.filename;
-    return this.moderatorService.createModerator(moderatorInfo, reportDto);
+    return this.moderatorService.createModerator(moderatorInfo, report);
   }
 
   @Put(':id')
@@ -87,7 +87,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now() + file.originalname);
+          cb(null, Date.now().toString + file.originalname);
         },
       }),
     }),
@@ -123,7 +123,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now() + file.filename);
+          cb(null, Date.now().toString() + file.originalname);
         },
       }),
     }),

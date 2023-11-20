@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { AnnouncementEntity } from './announcement.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,15 +15,23 @@ export class AnnouncementService {
   ) {}
 
   async createAnnouncement(
+    moderatorId: number,
     announcementDto: AnnouncementDto,
   ): Promise<AnnouncementEntity> {
-    const { moderatorId, ...rest } = announcementDto;
-    const newAnnouncement = this.announcementRepository.create({
-      ...rest,
-      moderator: { id: moderatorId }, // create a ModeratorEntity reference
+    const moderator = await this.moderatorRepository.findOneBy({
+      id: moderatorId,
     });
-    await this.announcementRepository.save(newAnnouncement);
-    return newAnnouncement;
+
+    if (!moderator) {
+      throw new NotFoundException('Moderator not found');
+    }
+
+    const newAnnouncement = this.announcementRepository.create({
+      ...announcementDto,
+      moderator,
+    });
+
+    return this.announcementRepository.save(newAnnouncement);
   }
 
   async getAnnouncements(): Promise<AnnouncementEntity[]> {
@@ -45,5 +53,28 @@ export class AnnouncementService {
       throw new Error('Announcement not found');
     }
     await this.announcementRepository.remove(announcement);
+  }
+
+  async assignAnnouncement(
+    announcementId: number,
+    moderatorId: number,
+  ): Promise<AnnouncementEntity> {
+    const moderator = await this.moderatorRepository.findOneBy({
+      id: moderatorId,
+    });
+
+    if (!moderator) {
+      throw new Error('Moderator not found');
+    }
+
+    const announcement = await this.announcementRepository.findOneBy({
+      id: announcementId,
+    });
+    if (!announcement) {
+      throw new Error('Announcement not found');
+    }
+
+    announcement.moderator = moderator[0];
+    return this.announcementRepository.save(announcement);
   }
 }

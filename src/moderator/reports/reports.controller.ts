@@ -10,6 +10,7 @@ import {
   Post,
   Put,
   Query,
+  Session,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -17,6 +18,7 @@ import { ReportsService } from './reports.service';
 import { ReportsDto } from './reports.dto';
 import { ModeratorService } from '../moderator.service';
 import { ModeratorInfo } from '../moderator.dto';
+import { ReportsEntity } from './reports.entity';
 
 @Controller('reports')
 export class ReportsController {
@@ -25,19 +27,15 @@ export class ReportsController {
     private moderatorService: ModeratorService,
   ) {}
 
-  // @Post('createReport')
-  // @UsePipes(new ValidationPipe())
-  // async createReport(@Body() reportDto: ReportsDto) {
-  //   try {
-  //     const user = await this.moderatorService.findModerator(reportDto.user);
-  //     if (!user) {
-  //       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
-  //     }
-  //     return await this.reportsService.createReport(reportDto);
-  //   } catch (error) {
-  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-  //   }
-  // }
+  @Post('createReport')
+  @UsePipes(new ValidationPipe())
+  async createReport(@Body() reportDto: ReportsDto) {
+    try {
+      return await this.reportsService.createReport(reportDto);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 
   @Get()
   async showAllReports() {
@@ -48,13 +46,13 @@ export class ReportsController {
     }
   }
 
-  @Put('assignModerator/:id')
+  @Put('assignReport')
   async assignReport(
-    @Param('id') id: number,
-    @Body() updateReportDto: ReportsDto,
-  ) {
+    @Body('reportId') reportId: number,
+    @Body('moderatorId') moderatorId: number,
+  ): Promise<ReportsEntity> {
     try {
-      return await this.reportsService.assignReport(id, updateReportDto);
+      return await this.reportsService.assignReport(reportId, moderatorId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -64,7 +62,7 @@ export class ReportsController {
   async updateReport(
     @Param('id') id: number,
     @Body() updateReportDto: ReportsDto,
-  ) {
+  ): Promise<ReportsEntity> {
     try {
       return await this.reportsService.updateReport(id, updateReportDto);
     } catch (error) {

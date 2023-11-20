@@ -16,9 +16,6 @@ export class ReportsEntity {
   @Column()
   title: string;
 
-  // @Column()
-  // user: number;
-
   @Column()
   subject: string;
 

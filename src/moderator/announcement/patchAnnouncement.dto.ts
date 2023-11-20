@@ -6,8 +6,4 @@ export class PatchAnnouncementDto {
 
   @IsString()
   description?: string;
-
-  @IsNumber()
-  @IsOptional()
-  moderatorId?: number;
 }

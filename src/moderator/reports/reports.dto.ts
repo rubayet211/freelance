@@ -6,6 +6,7 @@ import {
   IsString,
   Length,
   MaxLength,
+  IsNumber,
 } from 'class-validator';
 
 export class ReportsDto {
@@ -13,9 +14,6 @@ export class ReportsDto {
   @IsNotEmpty()
   @Length(1, 50, { message: 'Title is too long' })
   title: string;
-
-  // @IsNotEmpty()
-  // user: number;
 
   @IsNotEmpty()
   @IsString()
@@ -28,7 +26,4 @@ export class ReportsDto {
 
   @IsIn(['pending', 'resolved', 'processing', 'rejected'])
   status: string;
-
-  @IsOptional()
-  moderatorId: number;
 }

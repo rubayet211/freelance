@@ -31,7 +31,4 @@ export class ModeratorInfo {
   password: string;
 
   filename: string;
-
-  @IsOptional()
-  reportId: number;
 }

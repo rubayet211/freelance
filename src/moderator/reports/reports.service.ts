@@ -14,35 +14,33 @@ export class ReportsService {
     private moderatorRepository: Repository<ModeratorEntity>,
   ) {}
 
-  // async createReport(reportDto: ReportsDto): Promise<ReportsEntity> {
-  //   const { user, moderatorId, ...rest } = reportDto;
-  //   const newReport = this.reportsRepository.create({
-  //     ...rest,
-  //     user: Number(user), // convert user to number
-  //     moderator: { id: moderatorId }, // create a ModeratorEntity reference
-  //   });
-  //   await this.reportsRepository.save(newReport);
-  //   return newReport;
-  // }
+  async createReport(reportDto: ReportsDto): Promise<ReportsEntity> {
+    const newReport = this.reportsRepository.create(reportDto);
+    await this.reportsRepository.save(newReport);
+    return newReport;
+  }
 
   async getReports(): Promise<ReportsEntity[]> {
     return this.reportsRepository.find();
   }
 
   async assignReport(
-    id: number,
-    updateReportDto: ReportsDto,
+    reportId: number,
+    moderatorId: number,
   ): Promise<ReportsEntity> {
     const moderator = await this.moderatorRepository.findOneBy({
-      id: updateReportDto.moderatorId,
+      id: moderatorId,
     });
+
     if (!moderator) {
       throw new Error('Moderator not found');
     }
-    const report = await this.reportsRepository.findOneBy({ id });
+
+    const report = await this.reportsRepository.findOneBy({ id: reportId });
     if (!report) {
       throw new Error('Report not found');
     }
+
     report.moderator = moderator;
     return this.reportsRepository.save(report);
   }
@@ -52,15 +50,17 @@ export class ReportsService {
     updateReportDto: ReportsDto,
   ): Promise<ReportsEntity> {
     const moderator = await this.moderatorRepository.findOneBy({
-      id: updateReportDto.moderatorId,
+      id,
     });
     if (!moderator) {
       throw new Error('Moderator not found');
     }
+
     const report = await this.reportsRepository.findOneBy({ id });
     if (!report) {
       throw new Error('Report not found');
     }
+
     report.moderator = moderator;
     return this.reportsRepository.save(report);
   }

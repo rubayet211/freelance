@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString, Length } from 'class-validator';
 
 export class AnnouncementDto {
   @IsNotEmpty()
@@ -11,6 +11,5 @@ export class AnnouncementDto {
   @Length(1, 150, { message: 'Description is too long' }) // Set your desired min and max length here
   description: string;
 
-  @IsNotEmpty()
-  moderatorId: number;
+  moderatorId?: number;
 }
