@@ -3,6 +3,7 @@ import {
   IsEmpty,
   IsInt,
   IsNotEmpty,
+  IsOptional,
   IsString,
   Max,
   Min,
@@ -25,9 +26,12 @@ export class ModeratorInfo {
   @IsNotEmpty()
   email: string;
 
-  @IsString()
   @IsNotEmpty()
+  @IsString()
   password: string;
 
   filename: string;
+
+  @IsOptional()
+  reportId: number;
 }

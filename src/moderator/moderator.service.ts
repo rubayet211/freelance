@@ -29,7 +29,7 @@ export class ModeratorService {
     const newModerator = this.moderatorRepository.create(moderatorInfo);
     const savedModerator = await this.moderatorRepository.save(newModerator);
 
-    await this.reportRepository.save(reportDto);
+    // await this.reportRepository.save(reportDto);
 
     return savedModerator;
   }

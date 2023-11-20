@@ -14,16 +14,16 @@ export class ReportsService {
     private moderatorRepository: Repository<ModeratorEntity>,
   ) {}
 
-  async createReport(reportDto: ReportsDto): Promise<ReportsEntity> {
-    const moderator = await this.moderatorRepository.findOneBy({
-      id: reportDto.moderatorId,
-    });
-    if (!moderator) {
-      throw new Error('Moderator not found');
-    }
-    const report = this.reportsRepository.create({ ...reportDto, moderator });
-    return this.reportsRepository.save(report);
-  }
+  // async createReport(reportDto: ReportsDto): Promise<ReportsEntity> {
+  //   const { user, moderatorId, ...rest } = reportDto;
+  //   const newReport = this.reportsRepository.create({
+  //     ...rest,
+  //     user: Number(user), // convert user to number
+  //     moderator: { id: moderatorId }, // create a ModeratorEntity reference
+  //   });
+  //   await this.reportsRepository.save(newReport);
+  //   return newReport;
+  // }
 
   async getReports(): Promise<ReportsEntity[]> {
     return this.reportsRepository.find();

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { AnnouncementService } from './announcement.service';
 import { AnnouncementDto } from './announcement.dto';
+import { AnnouncementEntity } from './announcement.entity';
 
 @Controller('announcement')
 export class AnnouncementController {
@@ -23,16 +24,10 @@ export class AnnouncementController {
   }
 
   @Post('createAnnouncement')
-  @UsePipes(new ValidationPipe())
-  async createAnnouncement(
-    @Body() moderatorId: number,
-    @Body(ParseIntPipe) announcementDto: AnnouncementDto,
-  ) {
-    const announcement = await this.announcementService.createAnnouncement(
-      moderatorId,
-      announcementDto,
-    );
-    return announcement;
+  createAnnouncement(
+    @Body() announcementDto: AnnouncementDto,
+  ): Promise<AnnouncementEntity> {
+    return this.announcementService.createAnnouncement(announcementDto);
   }
   @Put('updateAnnouncement/:id')
   async updateAnnouncement(

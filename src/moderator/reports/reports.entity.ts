@@ -2,7 +2,6 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
@@ -17,8 +16,8 @@ export class ReportsEntity {
   @Column()
   title: string;
 
-  @Column()
-  user: string;
+  // @Column()
+  // user: number;
 
   @Column()
   subject: string;

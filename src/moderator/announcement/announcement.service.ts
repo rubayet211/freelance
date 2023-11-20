@@ -15,21 +15,17 @@ export class AnnouncementService {
   ) {}
 
   async createAnnouncement(
-    moderatorId: number,
     announcementDto: AnnouncementDto,
   ): Promise<AnnouncementEntity> {
-    const moderator = await this.moderatorRepository.findOneBy({
-      id: moderatorId,
+    const { moderatorId, ...rest } = announcementDto;
+    const newAnnouncement = this.announcementRepository.create({
+      ...rest,
+      moderator: { id: moderatorId }, // create a ModeratorEntity reference
     });
-    if (!moderator) {
-      throw new Error('Moderator not found');
-    }
-    const announcement = this.announcementRepository.create({
-      ...announcementDto,
-      moderator,
-    });
-    return this.announcementRepository.save(announcement);
+    await this.announcementRepository.save(newAnnouncement);
+    return newAnnouncement;
   }
+
   async getAnnouncements(): Promise<AnnouncementEntity[]> {
     return await this.announcementRepository.find();
   }

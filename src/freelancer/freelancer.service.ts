@@ -1,13 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-
+import { Freelancer } from 'src/shared/entities/freelancer.entity';
 import { ILike, Repository } from 'typeorm';
-import { CreateFreelancerDto, UpdateFreelancerDto } from './freelancer.dto';
-
+import { User } from 'src/shared/entities/user.entity';
 import { Skill } from 'src/shared/entities/skills.entity';
 import { projectsEntity } from 'src/shared/entities/projects.entity';
-import { Freelancer } from 'src/shared/entities/freelancer.entity';
-import { User } from 'src/shared/entities/user.entity';
 
 @Injectable()
 export class FreelancerService {

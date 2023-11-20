@@ -8,6 +8,8 @@ import { AnnouncementController } from './announcement/announcement.controller';
 import { AnnouncementEntity } from './announcement/announcement.entity';
 import { ReportsEntity } from './reports/reports.entity';
 import { MailerModule } from '@nestjs-modules/mailer';
+import { ReportsController } from './reports/reports.controller';
+import { ReportsService } from './reports/reports.service';
 
 @Module({
   imports: [
@@ -30,7 +32,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
       },
     }),
   ],
-  controllers: [ModeratorController, AnnouncementController],
-  providers: [ModeratorService, AnnouncementService],
+  controllers: [ModeratorController, AnnouncementController, ReportsController],
+  providers: [ModeratorService, AnnouncementService, ReportsService],
 })
 export class ModeratorModule {}

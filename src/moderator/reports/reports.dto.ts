@@ -7,7 +7,6 @@ import {
   Length,
   MaxLength,
 } from 'class-validator';
-import { ModeratorEntity } from '../moderator.entity';
 
 export class ReportsDto {
   @IsString()
@@ -15,9 +14,8 @@ export class ReportsDto {
   @Length(1, 50, { message: 'Title is too long' })
   title: string;
 
-  @IsString()
-  @IsNotEmpty()
-  user: string;
+  // @IsNotEmpty()
+  // user: number;
 
   @IsNotEmpty()
   @IsString()

@@ -56,7 +56,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now() + file.originalname);
+          cb(null, Date.now() + file.filename);
         },
       }),
     }),
@@ -76,7 +76,7 @@ export class ModeratorController {
   @UseInterceptors(
     FileInterceptor('profilepic', {
       fileFilter: (req, file, cb) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+        if (!file.filename.match(/\.(jpg|jpeg|png|gif)$/)) {
           return cb(new Error('Only image files are allowed!'), false);
         }
         cb(null, true);
@@ -123,7 +123,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now() + file.originalname);
+          cb(null, Date.now() + file.filename);
         },
       }),
     }),

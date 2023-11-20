@@ -16,6 +16,7 @@ import {
 import { ReportsService } from './reports.service';
 import { ReportsDto } from './reports.dto';
 import { ModeratorService } from '../moderator.service';
+import { ModeratorInfo } from '../moderator.dto';
 
 @Controller('reports')
 export class ReportsController {
@@ -24,15 +25,19 @@ export class ReportsController {
     private moderatorService: ModeratorService,
   ) {}
 
-  @Post('createReport')
-  @UsePipes(new ValidationPipe())
-  async createReport(@Body() reportDto: ReportsDto) {
-    try {
-      return await this.reportsService.createReport(reportDto);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
+  // @Post('createReport')
+  // @UsePipes(new ValidationPipe())
+  // async createReport(@Body() reportDto: ReportsDto) {
+  //   try {
+  //     const user = await this.moderatorService.findModerator(reportDto.user);
+  //     if (!user) {
+  //       throw new HttpException('User not found', HttpStatus.BAD_REQUEST);
+  //     }
+  //     return await this.reportsService.createReport(reportDto);
+  //   } catch (error) {
+  //     throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+  //   }
+  // }
 
   @Get()
   async showAllReports() {

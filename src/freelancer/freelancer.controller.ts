@@ -14,15 +14,13 @@ import {
   UseInterceptors,
   UploadedFile,
   UseGuards,
-  Session,
 } from '@nestjs/common';
 import { FreelancerService } from './freelancer.service';
 import { MulterError, diskStorage } from 'multer';
-import { CreateFreelancerDto, UpdateFreelancerDto } from './freelancer.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import * as fs from 'fs';
-import * as session from 'express-session';
+import session from 'express-session';
 @Controller('freelancer')
 export class FreelancerController {
   constructor(private freelancerService: FreelancerService) {}
@@ -233,7 +231,7 @@ export class FreelancerController {
   }
 
   @Get('getSession')
-  getSession(@Req() req, @Res() res, @Session() session) {
+  getSession(@Req() req, @Res() res) {
     try {
       const session = req.session;
       res.status(200).json({ session: session });

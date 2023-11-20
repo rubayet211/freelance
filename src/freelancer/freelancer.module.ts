@@ -2,14 +2,15 @@ import { Module } from '@nestjs/common';
 import { FreelancerController } from './freelancer.controller';
 import { FreelancerService } from './freelancer.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtModule } from '@nestjs/jwt';
-import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { JwtStrategy } from './guards/jwt.strategy';
-import { clientsEntity } from 'src/shared/entities/clients.entity';
-import { projectsEntity } from 'src/shared/entities/projects.entity';
+import { Freelancer } from 'src/shared/entities/freelancer.entity';
 import { Skill } from 'src/shared/entities/skills.entity';
 import { User } from 'src/shared/entities/user.entity';
-import { Freelancer } from 'src/shared/entities/freelancer.entity';
+import { JwtModule } from '@nestjs/jwt';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { clientsEntity } from 'src/clients/entitties/client.entities';
+import { projectsEntity } from 'src/clients/entitties/clientproject.entities';
+import { JwtStrategy } from './guards/jwt-strategy';
+
 @Module({
   imports: [
     TypeOrmModule.forFeature([
