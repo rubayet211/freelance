@@ -26,11 +26,14 @@ export class AuthService {
     });
 
     if (check) {
+      if (check.username === userDto.username) {
+        throw new Error('Username is taken, Please try again');
+      }
+      if (check.email === userDto.email) {
       throw new Error('Email already exists');
+      }
     }
-    if (check.username === userDto.username) {
-      throw new Error('Username is taken, Please try again');
-    }
+  
 
     const newUser = await this.userRepository.save(userDto);
     const { password, ...userResult } = newUser;
@@ -72,12 +75,7 @@ export class AuthService {
           return {
             message: 'Invalid Request',
           };
-        } else {
-          return {
-            message: 'OTP Sent Successfully',
-            email: newUser.email,
-          };
-        }
+        } 
       });
     }
 

@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
-import { AdminModule } from './admin/admin.module';
+
 import { FreelancerModule } from './freelancer/freelancer.module';
-import { ModeratorModule } from './moderator/moderator.module';
+
 import { AuthModule } from './shared/auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
@@ -12,14 +12,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: '1234',
-      database: 'freelance',
+      password: '20442903',
+      database: 'Freelance',
       autoLoadEntities: true,
       synchronize: true,
     }),
-    AdminModule,
+   
     FreelancerModule,
-    ModeratorModule,
+   
     AuthModule,
   ],
   controllers: [],
