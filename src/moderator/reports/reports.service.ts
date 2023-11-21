@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ReportsEntity } from './reports.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { ReportsDto } from './reports.dto';
 import { ModeratorEntity } from '../moderator.entity';
 
@@ -76,10 +76,10 @@ export class ReportsService {
   async searchReports(keyword: string): Promise<ReportsEntity[]> {
     return this.reportsRepository
       .createQueryBuilder('report')
-      .where(
-        'report.title LIKE :keyword OR report.subject LIKE :keyword OR report.description LIKE :keyword',
-        { keyword: `%${keyword}%` },
-      )
+      .where('report.title LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('report.subject LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('report.description LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('report.status LIKE :keyword', { keyword: `%${keyword}%` })
       .getMany();
   }
 }

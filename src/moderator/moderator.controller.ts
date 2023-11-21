@@ -46,7 +46,7 @@ export class ModeratorController {
     FileInterceptor('profilepic', {
       fileFilter: (req, file, cb) => {
         if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
+          return cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
         cb(null, true);
       },
@@ -56,7 +56,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now().toString + file.filename);
+          cb(null, Date.now() + file.originalname);
         },
       }),
     }),
@@ -76,8 +76,8 @@ export class ModeratorController {
   @UseInterceptors(
     FileInterceptor('profilepic', {
       fileFilter: (req, file, cb) => {
-        if (!file.filename.match(/\.(jpg|jpeg|png|gif)$/)) {
-          return cb(new Error('Only image files are allowed!'), false);
+        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
+          return cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
         }
         cb(null, true);
       },
@@ -87,7 +87,7 @@ export class ModeratorController {
       storage: diskStorage({
         destination: './uploads',
         filename: function (req, file, cb) {
-          cb(null, Date.now().toString + file.originalname);
+          cb(null, Date.now().toString() + file.originalname);
         },
       }),
     }),

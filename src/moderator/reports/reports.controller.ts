@@ -46,7 +46,7 @@ export class ReportsController {
     }
   }
 
-  @Put('assignReport')
+  @Put('assignModerator')
   async assignReport(
     @Body('reportId') reportId: number,
     @Body('moderatorId') moderatorId: number,
