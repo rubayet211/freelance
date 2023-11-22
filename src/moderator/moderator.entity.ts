@@ -35,7 +35,7 @@ export class ModeratorEntity {
   @Column()
   filename: string;
 
-  @OneToOne(() => ReportsEntity, (report) => report.moderator) // specify inverse side as a second parameter
+  @OneToOne(() => ReportsEntity, (report) => report.moderator)
   @JoinColumn()
   report: ReportsEntity;
 

@@ -31,6 +31,6 @@ export class ReportsEntity {
   @Column()
   status: string;
 
-  @OneToOne(() => ModeratorEntity, (moderator) => moderator.report) // specify inverse side as a second parameter
+  @OneToOne(() => ModeratorEntity, (moderator) => moderator.report)
   moderator: ModeratorEntity;
 }
