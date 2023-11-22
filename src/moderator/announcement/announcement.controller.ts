@@ -9,6 +9,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -75,5 +76,12 @@ export class AnnouncementController {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  @Get('search')
+  async searchAnnouncements(
+    @Query('keyword') keyword: string,
+  ): Promise<AnnouncementEntity[]> {
+    return this.announcementService.searchAnnouncements(keyword);
   }
 }

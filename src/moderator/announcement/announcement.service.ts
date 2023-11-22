@@ -84,4 +84,13 @@ export class AnnouncementService {
     announcement.moderator = moderator[0];
     return this.announcementRepository.save(announcement);
   }
+  async searchAnnouncements(keyword: string): Promise<AnnouncementEntity[]> {
+    return this.announcementRepository
+      .createQueryBuilder('announcement')
+      .where('announcement.title LIKE :keyword', { keyword: `%${keyword}%` })
+      .orWhere('announcement.description LIKE :keyword', {
+        keyword: `%${keyword}%`,
+      })
+      .getMany();
+  }
 }
