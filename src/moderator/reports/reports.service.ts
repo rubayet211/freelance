@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { ReportsEntity } from './reports.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { FindOneOptions, Like, Repository } from 'typeorm';
 import { ReportsDto } from './reports.dto';
 import { ModeratorEntity } from '../moderator.entity';
 import { UpdateReportDto } from './updateStatus.dto';
@@ -81,5 +81,20 @@ export class ReportsService {
       .orWhere('report.description LIKE :keyword', { keyword: `%${keyword}%` })
       .orWhere('report.status LIKE :keyword', { keyword: `%${keyword}%` })
       .getMany();
+  }
+
+  async unassignModeratorIfRejected(reportId: number): Promise<ReportsEntity> {
+    const report = await this.reportsRepository.findOneBy({ id: reportId });
+
+    if (!report) {
+      throw new HttpException('Report not found', HttpStatus.NOT_FOUND);
+    }
+
+    if (report.status === 'rejected' && report.moderator) {
+      report.moderator = null;
+      return this.reportsRepository.save(report);
+    }
+
+    return report;
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Like, Repository } from 'typeorm';
 import { ModeratorEntity } from './moderator.entity';
@@ -89,5 +89,9 @@ export class ModeratorService {
       return result;
     }
     return null;
+  }
+  async getAllUsernames(): Promise<string[]> {
+    const moderators = await this.moderatorRepository.find();
+    return moderators.map((moderator) => moderator.username);
   }
 }
