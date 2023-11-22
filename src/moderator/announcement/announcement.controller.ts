@@ -26,13 +26,21 @@ export class AnnouncementController {
     return this.announcementService.getAnnouncements();
   }
 
-  @Post('createAnnouncement/:moderatorId')
+  @Post('createAnnouncement')
   @UsePipes(new ValidationPipe())
   createAnnouncement(
-    @Body() moderatorId: number,
     @Body() announcementDto: AnnouncementDto,
   ): Promise<AnnouncementEntity> {
-    return this.announcementService.createAnnouncement(
+    return this.announcementService.createAnnouncement(announcementDto);
+  }
+
+  @Post('createAnnouncementWith/:moderatorId')
+  @UsePipes(new ValidationPipe())
+  createAnnouncementWith(
+    @Param('moderatorId', ParseIntPipe) moderatorId: number,
+    @Body() announcementDto: AnnouncementDto,
+  ): Promise<AnnouncementEntity> {
+    return this.announcementService.createAnnouncementWith(
       moderatorId,
       announcementDto,
     );

@@ -15,6 +15,13 @@ export class AnnouncementService {
   ) {}
 
   async createAnnouncement(
+    announcementDto: AnnouncementDto,
+  ): Promise<AnnouncementEntity> {
+    const newAnnouncement = this.announcementRepository.create(announcementDto);
+    return this.announcementRepository.save(newAnnouncement);
+  }
+
+  async createAnnouncementWith(
     moderatorId: number,
     announcementDto: AnnouncementDto,
   ): Promise<AnnouncementEntity> {

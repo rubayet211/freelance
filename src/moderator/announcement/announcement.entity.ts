@@ -2,6 +2,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinTable,
   ManyToMany,
   ManyToOne,
   OneToMany,
@@ -28,5 +29,6 @@ export class AnnouncementEntity {
   updateDate: Date;
 
   @ManyToOne(() => ModeratorEntity, (moderator) => moderator.announcements)
+  @JoinTable()
   moderator: ModeratorEntity;
 }

@@ -6,6 +6,7 @@ import {
   HttpException,
   HttpStatus,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Put,
@@ -19,6 +20,8 @@ import { ReportsDto } from './reports.dto';
 import { ModeratorService } from '../moderator.service';
 import { ModeratorInfo } from '../moderator.dto';
 import { ReportsEntity } from './reports.entity';
+import { UpdateReportDto } from './updateStatus.dto';
+import { DeleteModDto } from './deletemod.dto';
 
 @Controller('reports')
 export class ReportsController {
@@ -58,13 +61,17 @@ export class ReportsController {
     }
   }
 
-  @Patch('updateReport/:id')
+  @Patch('updateReportStatus/:id')
   async updateReport(
     @Param('id') id: number,
-    @Body() updateReportDto: ReportsDto,
+    @Body() updateReportDto: UpdateReportDto,
   ): Promise<ReportsEntity> {
     try {
-      return await this.reportsService.updateReport(id, updateReportDto);
+      const report = await this.reportsService.updateReportStatus(
+        id,
+        updateReportDto.status,
+      );
+      return report;
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

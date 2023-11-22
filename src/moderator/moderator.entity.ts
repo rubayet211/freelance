@@ -2,6 +2,7 @@ import {
   Column,
   Entity,
   JoinColumn,
+  JoinTable,
   ManyToOne,
   OneToMany,
   OneToOne,
@@ -39,6 +40,7 @@ export class ModeratorEntity {
   report: ReportsEntity;
 
   @OneToMany(() => AnnouncementEntity, (announcement) => announcement.moderator)
+  @JoinTable()
   announcements: AnnouncementEntity[];
 
   @OneToMany(() => Admin, (Admin) => Admin.Moderators)
