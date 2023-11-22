@@ -44,9 +44,11 @@ export class AnnouncementService {
   async getAnnouncements(): Promise<AnnouncementEntity[]> {
     return await this.announcementRepository.find();
   }
+
   async getAnnouncementById(id: number): Promise<AnnouncementEntity> {
     return await this.announcementRepository.findOneBy({ id: id });
   }
+
   async updateAnnouncement(
     id: number,
     announcementdto: AnnouncementDto,

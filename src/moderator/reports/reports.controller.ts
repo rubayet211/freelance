@@ -94,4 +94,13 @@ export class ReportsController {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  @Get('reportsByStatus')
+  async getReportsByStatus(@Query('status') status: string) {
+    try {
+      return await this.reportsService.getReportsByStatus(status);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

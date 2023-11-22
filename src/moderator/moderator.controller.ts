@@ -70,37 +70,6 @@ export class ModeratorController {
     return this.moderatorService.createModerator(moderatorInfo, report);
   }
 
-  @Put(':id')
-  @UseGuards(SessionGuard)
-  @UsePipes(new ValidationPipe())
-  @UseInterceptors(
-    FileInterceptor('profilepic', {
-      fileFilter: (req, file, cb) => {
-        if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/)) {
-          return cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'image'), false);
-        }
-        cb(null, true);
-      },
-      limits: {
-        fileSize: 300000,
-      },
-      storage: diskStorage({
-        destination: './uploads',
-        filename: function (req, file, cb) {
-          cb(null, Date.now().toString() + file.originalname);
-        },
-      }),
-    }),
-  )
-  updateModerator(
-    @Param('id') id: number,
-    @Body() moderatorInfo: ModeratorInfo,
-    @UploadedFile() myfile: Express.Multer.File,
-  ): object {
-    moderatorInfo.filename = myfile.filename;
-    return this.moderatorService.updateModerator(id, moderatorInfo);
-  }
-
   @Get(':id')
   @UseGuards(SessionGuard)
   getModeratorById(@Param('id', ParseIntPipe) id: number): object {

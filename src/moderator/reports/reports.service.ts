@@ -83,18 +83,7 @@ export class ReportsService {
       .getMany();
   }
 
-  async unassignModeratorIfRejected(reportId: number): Promise<ReportsEntity> {
-    const report = await this.reportsRepository.findOneBy({ id: reportId });
-
-    if (!report) {
-      throw new HttpException('Report not found', HttpStatus.NOT_FOUND);
-    }
-
-    if (report.status === 'rejected' && report.moderator) {
-      report.moderator = null;
-      return this.reportsRepository.save(report);
-    }
-
-    return report;
+  getReportsByStatus(status: string): Promise<ReportsEntity[]> {
+    return this.reportsRepository.find({ where: { status } });
   }
 }

@@ -40,13 +40,6 @@ export class ModeratorService {
   async getModeratorById(id: number): Promise<ModeratorEntity> {
     return await this.moderatorRepository.findOneBy({ id: id });
   }
-  async updateModerator(
-    id: number,
-    moderatorInfo: ModeratorInfo,
-  ): Promise<any> {
-    await this.moderatorRepository.update(id, moderatorInfo);
-    return await this.moderatorRepository.findOneBy({ id: id });
-  }
 
   async updateSpecModerator(
     id: number,
