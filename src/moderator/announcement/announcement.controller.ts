@@ -86,4 +86,9 @@ export class AnnouncementController {
   async deleteAnnouncement(@Param('id', ParseIntPipe) id: number) {
     return this.announcementService.deleteAnnouncement(id);
   }
+
+  @Get('getAnnouncementsWithmod')
+  async getAnnouncementsWithMod(): Promise<AnnouncementEntity[]> {
+    return this.announcementService.getAnnouncementsWithmod();
+  }
 }

@@ -25,10 +25,15 @@ import { ModeratorInfo } from './moderator.dto';
 import { ReportsEntity } from './reports/reports.entity';
 import { ReportsDto } from './reports/reports.dto';
 import { SessionGuard } from './session.guard';
+import { AnnouncementService } from './announcement/announcement.service';
+import { AnnouncementEntity } from './announcement/announcement.entity';
 
 @Controller('moderator')
 export class ModeratorController {
-  constructor(private readonly moderatorService: ModeratorService) {}
+  constructor(
+    private readonly moderatorService: ModeratorService,
+    private readonly announcementService: AnnouncementService,
+  ) {}
 
   @Get()
   @UseGuards(SessionGuard)
@@ -144,5 +149,12 @@ export class ModeratorController {
   @Get('usernames')
   async getAllUsernames() {
     return this.moderatorService.getAllUsernames();
+  }
+
+  @Get(':id/announcements')
+  async getModeratorAnnouncements(
+    @Param('id') id: number,
+  ): Promise<AnnouncementEntity[]> {
+    return this.announcementService.getAnnouncementsByModerator(id);
   }
 }

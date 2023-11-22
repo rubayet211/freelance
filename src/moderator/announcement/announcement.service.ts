@@ -80,6 +80,7 @@ export class AnnouncementService {
     announcement.moderator = moderator[0];
     return this.announcementRepository.save(announcement);
   }
+
   async searchAnnouncements(keyword: string): Promise<AnnouncementEntity[]> {
     return this.announcementRepository
       .createQueryBuilder('announcement')
@@ -106,5 +107,22 @@ export class AnnouncementService {
       throw new NotFoundException('Announcement not found');
     }
     await this.announcementRepository.remove(announcement);
+  }
+
+  async getAnnouncementsWithmod(): Promise<AnnouncementEntity[]> {
+    return await this.announcementRepository
+      .createQueryBuilder('announcement')
+      .leftJoinAndSelect('announcement.moderator', 'moderator') // Eager loading
+      .getMany();
+  }
+
+  async getAnnouncementsByModerator(
+    moderatorId: number,
+  ): Promise<AnnouncementEntity[]> {
+    return this.announcementRepository.find({
+      where: {
+        moderator: { id: moderatorId },
+      },
+    });
   }
 }
