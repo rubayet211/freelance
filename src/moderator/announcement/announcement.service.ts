@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AnnouncementDto } from './announcement.dto';
 import { ModeratorEntity } from '../moderator.entity';
+import { PatchAnnouncementDto } from './patchAnnouncement.dto';
 
 @Injectable()
 export class AnnouncementService {
@@ -56,13 +57,6 @@ export class AnnouncementService {
     await this.announcementRepository.update(id, announcementdto);
     return await this.announcementRepository.findOneBy({ id: id });
   }
-  async deleteAnnouncement(id: number): Promise<void> {
-    const announcement = await this.announcementRepository.findOneBy({ id });
-    if (!announcement) {
-      throw new Error('Announcement not found');
-    }
-    await this.announcementRepository.remove(announcement);
-  }
 
   async assignAnnouncement(
     announcementId: number,
@@ -89,10 +83,28 @@ export class AnnouncementService {
   async searchAnnouncements(keyword: string): Promise<AnnouncementEntity[]> {
     return this.announcementRepository
       .createQueryBuilder('announcement')
-      .where('announcement.title LIKE :keyword', { keyword: `%${keyword}%` })
-      .orWhere('announcement.description LIKE :keyword', {
+      .where('LOWER(announcement.title) LIKE LOWER(:keyword)', {
+        keyword: `%${keyword}%`,
+      })
+      .orWhere('LOWER(announcement.description) LIKE LOWER(:keyword)', {
         keyword: `%${keyword}%`,
       })
       .getMany();
+  }
+
+  async patchAnnouncement(
+    id: number,
+    patchAnnouncementDto: PatchAnnouncementDto,
+  ): Promise<AnnouncementEntity> {
+    await this.announcementRepository.update(id, patchAnnouncementDto);
+    return this.announcementRepository.findOneBy({ id });
+  }
+
+  async deleteAnnouncement(id: number): Promise<void> {
+    const announcement = await this.announcementRepository.findOneBy({ id });
+    if (!announcement) {
+      throw new NotFoundException('Announcement not found');
+    }
+    await this.announcementRepository.remove(announcement);
   }
 }

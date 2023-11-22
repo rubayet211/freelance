@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Put,
   Query,
@@ -17,6 +18,7 @@ import { AnnouncementService } from './announcement.service';
 import { AnnouncementDto } from './announcement.dto';
 import { AnnouncementEntity } from './announcement.entity';
 import { ModeratorEntity } from '../moderator.entity';
+import { PatchAnnouncementDto } from './patchAnnouncement.dto';
 
 @Controller('announcement')
 export class AnnouncementController {
@@ -58,11 +60,6 @@ export class AnnouncementController {
     return announcement;
   }
 
-  @Delete('deleteAnnouncement/:id')
-  async deleteAnnouncement(@Param('id', ParseIntPipe) id: number) {
-    return this.announcementService.deleteAnnouncement(id);
-  }
-
   @Put('assignModerator')
   async assignModerator(
     @Body('announcementId') announcementId: number,
@@ -83,5 +80,10 @@ export class AnnouncementController {
     @Query('keyword') keyword: string,
   ): Promise<AnnouncementEntity[]> {
     return this.announcementService.searchAnnouncements(keyword);
+  }
+
+  @Delete('deleteAnnouncement/:id')
+  async deleteAnnouncement(@Param('id', ParseIntPipe) id: number) {
+    return this.announcementService.deleteAnnouncement(id);
   }
 }
