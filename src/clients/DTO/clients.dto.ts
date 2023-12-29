@@ -17,7 +17,7 @@ export class clientCredentials {
     type:string;
 
     @IsNotEmpty()
-    Image:string;
+    image:string;
     
 }
     

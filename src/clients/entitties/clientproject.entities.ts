@@ -8,23 +8,26 @@ export class projectsEntity
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column()
+    @Column({ nullable: true })
     projectTitle:string;
 
-    @Column()
+    @Column({ nullable: true })
     projectBudget:string;
 
-    @Column()
-    projectCurrency:string;
-
-    @Column()
+    @Column({ nullable: true })
     projectDescription:string;
     
     @CreateDateColumn()
     createdAt:Date;
 
-    @Column()
+    @Column({ nullable: true })
     Skills:string;
+    
+    @Column({ nullable: true })
+    rating:string;
+
+    @Column({ nullable: true })
+    image:string;
 
     @ManyToOne(()=>clientsEntity, (clientsEntity)=>clientsEntity.Projects)
     client:clientsEntity;

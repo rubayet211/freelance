@@ -21,9 +21,17 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import * as fs from 'fs';
 import session from 'express-session';
+import { Freelancer } from 'src/shared/entities/freelancer.entity';
+
 @Controller('freelancer')
 export class FreelancerController {
   constructor(private freelancerService: FreelancerService) {}
+
+  @Get()
+  getAllFreelancers(): Promise<Freelancer[]> {
+      console.log("getAllClients method");
+      return this.freelancerService.FindAllFreelancers();
+  }
 
   @Get('getProfilePicture')
   @UseGuards(JwtAuthGuard)

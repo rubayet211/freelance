@@ -31,19 +31,19 @@ export class ClientsServices {
     return this.userRepository.find({ relations: ['Projects'] });
   }
 
-  FindOneClient(id: number): Promise<clientsEntity[]> {
-    return this.userRepository.find({
+  FindOneClient(id: number): Promise<clientsEntity> {
+    return this.userRepository.findOne({
       where: { id: id },
       relations: ['Projects'],
     });
   }
 
-  FindAllClientsByType(params: string): Promise<clientsEntity[]> {
-    return this.userRepository.find({
-      where: { type: params },
-      relations: ['Projects'],
-    });
-  }
+  // FindAllClientsByType(params: string): Promise<clientsEntity[]> {
+  //   return this.userRepository.find({
+  //     where: { type: params },
+  //     relations: ['Projects'],
+  //   });
+  // }
 
   DeleteClient(id: number) {
     this.userRepository.delete(id);
@@ -90,23 +90,25 @@ export class ClientsServices {
   }
 
   CreateClientImage(Id: number, path: string) {
-    this.userRepository.update({ id: Id }, { Image: path });
+    this.userRepository.update({ id: Id }, { image: path });
   }
 
   findclientimage(Id: number): Promise<clientsEntity> {
     return this.userRepository.findOne({
-      select: { Image: true },
+      select: {image: true },
       where: { id: Id },
     });
   }
 
-  async ClientLogin(LoginCredentials: ClientLoginDto) {
+  async ClientLogin(LoginCredentials: ClientLoginDto):Promise<clientsEntity> {
     const client = await this.userRepository.findOne({
       where: {
         email: LoginCredentials.email,
         password: LoginCredentials.password,
       },
     });
+    console.log(client);
+    return client;
   }
 
   async createClientProject(session, id: number, body: CreateProjectDTO) {
@@ -169,8 +171,8 @@ export class ClientsServices {
     return limitedclients;
   }
 
-  async FindAllProjectsLimited(query) {
-    const limitedprojects = await this.projectRepository.find({ take: query });
+  async FindAllProjects() {
+    const limitedprojects = await this.projectRepository.find();
     return limitedprojects;
   }
 
@@ -199,10 +201,10 @@ export class ClientsServices {
     });
   }
 
-  getProjByCurrency(query: string): Promise<projectsEntity[]> {
-    return this.projectRepository.find({
-      relations: ['Projects'],
-      where: { projectCurrency: query },
-    });
-  }
+  // getProjByCurrency(query: string): Promise<projectsEntity[]> {
+  //   return this.projectRepository.find({
+  //     relations: ['Projects'],
+  //     where: { projectCurrency: query },
+  //   });
+  // }
 }

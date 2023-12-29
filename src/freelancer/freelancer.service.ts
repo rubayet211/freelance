@@ -4,7 +4,7 @@ import { Freelancer } from 'src/shared/entities/freelancer.entity';
 import { ILike, Repository } from 'typeorm';
 import { User } from 'src/shared/entities/user.entity';
 import { Skill } from 'src/shared/entities/skills.entity';
-import { projectsEntity } from 'src/shared/entities/projects.entity';
+import { projectsEntity } from '../clients/entitties/clientproject.entities';
 
 @Injectable()
 export class FreelancerService {
@@ -18,6 +18,12 @@ export class FreelancerService {
     @InjectRepository(projectsEntity)
     private readonly projectsRepository: Repository<projectsEntity>,
   ) {}
+
+  async FindAllFreelancers()
+  {
+    const freelancers = await this.freelancerRepository.find();
+    return freelancers;
+  }
 
   async getFreelancerById(userId: number) {
     const user = await this.userRepository.findOne({

@@ -44,11 +44,11 @@ export class ClientsController {
     }
 
     //Get all the client's of the particular type
-    @Get('type')
-    getAllClientsType(@Query('type') params: string): Promise<clientsEntity[]> {
-        console.log("getAllClientsType method");
-        return this.clientsService.FindAllClientsByType(params);
-    }
+    // @Get('type')
+    // getAllClientsType(@Query('type') params: string): Promise<clientsEntity[]> {
+    //     console.log("getAllClientsType method");
+    //     // return this.clientsService.FindAllClientsByType(params);
+    // }
 
     @Get('limitclient')
     getAllClientsLimited(@Query('limit') query: number): Promise<clientsEntity[]> {
@@ -56,28 +56,29 @@ export class ClientsController {
         return this.clientsService.FindAllClientsLimited(query);
     }
 
-    @Get('limitproject')
-    getAllProjectsLimited(@Query('limit') query: number):Promise<projectsEntity[]>
+    @Get('projects')
+    getAllProjectsLimited():Promise<projectsEntity[]>
     {
         console.log("getAllProjecsLimited method");
-        return this.clientsService.FindAllProjectsLimited(query);
+        return this.clientsService.FindAllProjects();
     }
 
-    @Get('currencyproject')
-    getAllProjectsByCurrency(@Query('currency') query: string)
-    {
-        console.log("getAllProjecsLimited method");
-        return this.clientsService.getProjByCurrency(query);
-    }
+    // @Get('currencyproject')
+    // getAllProjectsByCurrency(@Query('currency') query: string)
+    // {
+    //     console.log("getAllProjecsLimited method");
+    //     return this.clientsService.getProjByCurrency(query);
+    // }
 
     @Get('login')
-    async clientLogin(@Headers() header, @Body() LoginCredentials, @Session() session) {
-        const app = await this.clientsService.ClientLogin(LoginCredentials);
-        // console.log(app.UUID);
-        console.log(session.id);
-        console.log(session);
+    async clientLogin(@Body() LoginCredentials, @Headers() header, @Session() session):Promise<clientsEntity> {
+        // console.log(header.email);
+        // console.log(header.password);
+        const app = await this.clientsService.ClientLogin(header);
+        console.log("I am from controller");
+        console.log(app);
         // session.UUID = app.UUID;
-        return (session.UUID);
+        return app;
     }
 
     @Get('project')
@@ -97,13 +98,14 @@ export class ClientsController {
 
     //Get a client by his/her ID
     @Get(':id')
-    getOneClient(@Param('id', ParseIntPipe) id: number): Promise<clientsEntity[]> {
+    getOneClient(@Param('id') id): Promise<clientsEntity> {
+        console.log(id);
         return this.clientsService.FindOneClient(id);
     }
 
     //Create a new client
     @Post('newclient')
-    @UseInterceptors(FileInterceptor('Image',
+    @UseInterceptors(FileInterceptor('image',
         {
             fileFilter: (req, file, cb) => {
                 if (file.originalname.match(/^.*\.(jpg|webp|png|jpeg)$/))
@@ -114,16 +116,22 @@ export class ClientsController {
             },
 
             storage: diskStorage({
-                destination: './clientImg',
+                destination: 'C:/Users/ATIF/Downloads/freelancefront/public',
                 filename: (req, file, cb) => {
                     cb(null, Date.now() + file.originalname)
                 }
             })
         }))
-    @UsePipes(new ValidationPipe())
-    createClient(@Body() req, @Body() credentials: clientCredentials, @UploadedFile() file: Express.Multer.File): string {
-        credentials.Image = file.filename;
-        this.clientsService.createClient(credentials);
+    // @UsePipes(new ValidationPipe())
+    createClient(@Body() req, @Body() credentials:clientCredentials, @UploadedFile() file): string {
+        // credentials.image = file.filename;
+        console.log(file);
+        console.log(credentials);
+        // const fileNam = "C:/Users/ATIF/Documents/Project/freelance/clientImg/";
+        const imagePath = "/".concat(file.filename);
+        console.log(imagePath);
+        const newObj = {...credentials,"image":imagePath};
+        this.clientsService.createClient(newObj);
         return "The client has been created.";
     }
 
@@ -168,7 +176,7 @@ export class ClientsController {
     @Get('clientimage/:id')
     getImage(@Param('id') id, @Res() res: Response) {
         return this.clientsService.findclientimage(id)
-        .then((value) => {res.sendFile(value.Image, { root: "./clientImg" });});
+        .then((value) => {res.sendFile(value.image, { root: "./clientImg" });});
     }
 
     

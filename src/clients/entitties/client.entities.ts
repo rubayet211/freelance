@@ -7,24 +7,17 @@ export class clientsEntity
     @PrimaryGeneratedColumn()
     id:number;
 
-    @Column()
+    @Column({ nullable: true })
     name: string;
 
-    @Column()
+    @Column({ nullable: true })
     email:string;
 
-    @Column()
+    @Column({ nullable: true })
     password:string;
-
-    @Column()
-    type:string;
-
-    @Column()
-    @Generated("uuid")
-    UUID:string;
     
-    @Column()
-    Image:string;
+    @Column({ nullable: true })
+    image:string;
 
     @OneToMany(()=>projectsEntity, (projectsEntity)=>projectsEntity.client)
     Projects:projectsEntity[];

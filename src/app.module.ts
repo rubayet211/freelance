@@ -17,7 +17,7 @@ import { AdminModule } from './admin/admin.module';
       host: 'localhost',
       port: 5432,
       username: 'postgres',
-      password: 'root123',
+      password: 'waledspg',
       database: 'freelance',
       autoLoadEntities: true,
       synchronize: true,
