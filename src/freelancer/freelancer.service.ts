@@ -25,163 +25,152 @@ export class FreelancerService {
     return freelancers;
   }
 
-  async getFreelancerById(userId: number) {
-    const user = await this.userRepository.findOne({
-      where: { userId: userId },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    console.log(user);
-    const Freelancer = await this.freelancerRepository.findOne({
-      where: { user: user },
-    });
-
-    return { ...Freelancer, user: user };
+  async createClient(clientDetails) {
+    this.freelancerRepository.save(clientDetails);
   }
 
-  async findSimilarProjectsByTitle(title: string) {
-    const similarProjects = await this.projectsRepository.find({
+  async FreelancerLogin(LoginCredentials):Promise<Freelancer> {
+    console.log("This are the details"+LoginCredentials);
+    const client = await this.freelancerRepository.findOne({
       where: {
-        projectTitle: ILike(`%${title}%`),
+        email: LoginCredentials.email,
+        password: LoginCredentials.password,
       },
     });
-
-    return similarProjects;
+    return client;
   }
 
-  async getFreelancerByIdParam(userId: number) {
-    const user = await this.userRepository.findOne({
-      where: { userId: userId },
+  FindOneFreelancer(id: number): Promise<Freelancer> {
+    return this.freelancerRepository.findOne({
+      where: { id: id }
     });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const Freelancer = await this.freelancerRepository.findOne({
-      where: { user: user },
-    });
-
-    return { ...Freelancer, user: user };
   }
 
-  async addSkillsToFreelancer(
-    freelancerId: number,
-    userId: number,
-    skills: string[],
-  ) {
-    const freelancer = await this.freelancerRepository.findOne({
-      where: { freelancerId },
-      relations: ['skills', 'user'],
-    });
+  // async getFreelancerById(userId: number) {
+  //   const user = await this.userRepository.findOne({
+  //     where: { userId: userId },
+  //   });
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+  //   console.log(user);
+  //   const Freelancer = await this.freelancerRepository.findOne({
+  //     where: { user: user },
+  //   });
 
-    const user = await this.userRepository.findOne({ where: { userId } });
+  //   return { ...Freelancer, user: user };
+  // }
 
-    if (!freelancer) {
-      throw new NotFoundException('Freelancer not found');
-    }
+  // async findSimilarProjectsByTitle(title: string) {
+  //   const similarProjects = await this.projectsRepository.find({
+  //     where: {
+  //       projectTitle: ILike(`%${title}%`),
+  //     },
+  //   });
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  //   return similarProjects;
+  // }
 
-    if (!Array.isArray(skills)) {
-      skills = [];
-    }
+  // async getFreelancerByIdParam(userId: number) {
+  //   const user = await this.userRepository.findOne({
+  //     where: { userId: userId },
+  //   });
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
+  //   const Freelancer = await this.freelancerRepository.findOne({
+  //     where: { user: user },
+  //   });
 
-    const skillEntities = skills.map((skillName) => {
-      const skill = new Skill();
-      skill.name = skillName;
-      return skill;
-    });
-    freelancer.skills = [...freelancer.skills, ...skillEntities];
-    await this.freelancerRepository.save(freelancer);
-    return freelancer;
-  }
+  //   return { ...Freelancer, user: user };
+  // }
 
-  async getProfilePicture(userId: number): Promise<string> {
-    const freelancer = await this.userRepository.findOne({
-      where: { userId: userId },
-    });
+ 
 
-    if (!freelancer) {
-      throw new NotFoundException('Freelancer not found');
-    }
+  // async getProfilePicture(userId: number): Promise<string> {
+  //   const freelancer = await this.userRepository.findOne({
+  //     where: { userId: userId },
+  //   });
 
-    return freelancer.picture;
-  }
+  //   if (!freelancer) {
+  //     throw new NotFoundException('Freelancer not found');
+  //   }
 
-  async deleteProfilePicture(userId: number): Promise<void> {
-    await this.userRepository.update(userId, { picture: null });
-  }
+  //   return freelancer.picture;
+  // }
 
-  async deleteSkill(skillId: number) {
-    const result = await this.skillRepository.delete(skillId);
-    if (result.affected === 1) {
-      return 'deleted successfully';
-    }
+  // async deleteProfilePicture(userId: number): Promise<void> {
+  //   await this.userRepository.update(userId, { picture: null });
+  // }
 
-    return 'Skill not found or not deleted';
-  }
+  // async deleteSkill(skillId: number) {
+  //   const result = await this.skillRepository.delete(skillId);
+  //   if (result.affected === 1) {
+  //     return 'deleted successfully';
+  //   }
 
-  async deleteFreelancer(userId: number): Promise<void> {
-    const user = await this.userRepository.findOne({
-      where: { userId: userId },
-    });
+  //   return 'Skill not found or not deleted';
+  // }
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
+  // // async deleteFreelancer(userId: number): Promise<void> {
+  // //   const user = await this.userRepository.findOne({
+  // //     where: { userId: userId },
+  // //   });
 
-    await this.userRepository
-      .createQueryBuilder('user')
-      .leftJoinAndSelect('user.freelancer', 'freelancer')
-      .leftJoinAndSelect('freelancer.skills', 'skills')
-      .where('user.userId = :userId', { userId })
-      .getOne();
+  //   if (!user) {
+  //     throw new NotFoundException('User not found');
+  //   }
 
-    if (user.freelancer) {
-      const freelancer = user.freelancer;
+  //   await this.userRepository
+  //     .createQueryBuilder('user')
+  //     .leftJoinAndSelect('user.freelancer', 'freelancer')
+  //     .leftJoinAndSelect('freelancer.skills', 'skills')
+  //     .where('user.userId = :userId', { userId })
+  //     .getOne();
 
-      const skillIds = freelancer.skills.map((skill) => skill.skillId);
-      const existingSkills = await this.skillRepository.findByIds(skillIds);
-      if (existingSkills.length > 0) {
-        await this.skillRepository.remove(existingSkills);
-      }
-      await this.freelancerRepository.remove(freelancer);
-    }
+  //   if (user.freelancer) {
+  //     const freelancer = user.freelancer;
 
-    await this.userRepository.remove(user);
-  }
+  //     const skillIds = freelancer.skills.map((skill) => skill.skillId);
+  //     const existingSkills = await this.skillRepository.findByIds(skillIds);
+  //     if (existingSkills.length > 0) {
+  //       await this.skillRepository.remove(existingSkills);
+  //     }
+  //     await this.freelancerRepository.remove(freelancer);
+  //   }
 
-  async uploadProfilePicture(userId: number, filename: string) {
-    const freelancer = await this.userRepository.findOne({
-      where: { userId: userId },
-    });
+  //   await this.userRepository.remove(user);
+  // }
 
-    if (!freelancer) {
-      throw new NotFoundException('Freelancer not found');
-    }
+  // async uploadProfilePicture(userId: number, filename: string) {
+  //   const freelancer = await this.userRepository.findOne({
+  //     where: { userId: userId },
+  //   });
 
-    freelancer.picture = './uploads/' + filename;
+  //   if (!freelancer) {
+  //     throw new NotFoundException('Freelancer not found');
+  //   }
 
-    return await this.userRepository.save(freelancer);
-  }
+  //   freelancer.picture = './uploads/' + filename;
 
-  async getProjects() {
-    const projects = await this.projectsRepository.find();
-    return projects;
-  }
+  //   return await this.userRepository.save(freelancer);
+  // }
 
-  async getProjectsById(id: number) {
-    const project = await this.projectsRepository.findOne({
-      where: { id: id },
-    });
-    return project;
-  }
-  async getProjectsBySkill(skill: string) {
-    const projects = await this.projectsRepository.find({
-      where: { Skills: skill },
-    });
-    return projects;
-  }
+  // async getProjects() {
+  //   const projects = await this.projectsRepository.find();
+  //   return projects;
+  // }
+
+  // async getProjectsById(id: number) {
+  //   const project = await this.projectsRepository.findOne({
+  //     where: { id: id },
+  //   });
+  //   return project;
+  // }
+  // async getProjectsBySkill(skill: string) {
+  //   const projects = await this.projectsRepository.find({
+  //     where: { Skills: skill },
+  //   });
+  //   return projects;
+  // }
 }

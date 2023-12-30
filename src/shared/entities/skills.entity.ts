@@ -9,6 +9,5 @@ export class Skill {
   @Column()
   name: string;
 
-  @ManyToMany(() => Freelancer, (freelancer) => freelancer.skills)
-  freelancers: Freelancer[];
+
 }

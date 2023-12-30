@@ -38,7 +38,8 @@ export class ClientsController {
 
     //Get all the clients
     @Get()
-    getAllClients(): Promise<clientsEntity[]> {
+    getAllClients(): Promise<clientsEntity[]> 
+    {
         console.log("getAllClients method");
         return this.clientsService.FindAllClients();
     }
@@ -99,6 +100,7 @@ export class ClientsController {
     //Get a client by his/her ID
     @Get(':id')
     getOneClient(@Param('id') id): Promise<clientsEntity> {
+        console.log("getOneClient method triggered.");
         console.log(id);
         return this.clientsService.FindOneClient(id);
     }

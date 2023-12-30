@@ -9,26 +9,33 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { User } from './user.entity';
-import { Skill } from './skills.entity';
+
 @Entity()
 export class Freelancer {
   @PrimaryGeneratedColumn()
-  freelancerId: number;
+  id: number;
 
   @Column({ nullable: true })
   description: string;
 
-  @Column()
-  hourlyRate: number;
+  @Column({ nullable: true })
+  name: string;
 
   @Column({ nullable: true })
-  availability: string;
+  email: string;
+
+  @Column({ nullable: true })
+  password: string;
+
+  @Column({ nullable: true })
+  image: string;
+
+  @Column()
+  hourlyRate: number;
 
   @OneToOne(() => User, (user) => user.freelancer, { onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 
-  @ManyToMany(() => Skill, { cascade: true, eager: true })
-  @JoinTable()
-  skills: Skill[];
+
 }

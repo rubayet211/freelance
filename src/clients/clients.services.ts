@@ -131,10 +131,13 @@ export class ClientsServices {
     return this.projectRepository.save(newproject);
   }
 
-  FindTheClientsProject(Id: number) {
-    return this.projectRepository.find({
-      relations: { client: true },
+  FindTheClientsProject(Id: number):Promise<projectsEntity> {
+    const data = this.projectRepository.findOne({
+      relations: { client: true }
+      // where:{ client:Id }
     });
+    console.log(data);
+    return data;
   }
 
   PatchProject(Param: number, Body) {
@@ -172,7 +175,7 @@ export class ClientsServices {
   }
 
   async FindAllProjects() {
-    const limitedprojects = await this.projectRepository.find();
+    const limitedprojects = await this.projectRepository.find(/*{relations:['client']}*/);
     return limitedprojects;
   }
 
